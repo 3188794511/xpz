@@ -1,0 +1,33 @@
+server:
+  port: 9000
+spring:
+  application:
+    name: service-gateway
+  cloud:
+    nacos:
+      server-addr: 192.168.171.200:8849
+    gateway:
+      discovery:
+        locator:
+          enabled: true
+      routes:
+        #service_user
+        - id: service-user
+          uri: lb://service-user
+          predicates:
+            - Path=/*/*/user/**
+       #service-blog
+        - id: service-blog
+          uri: lb://service-blog
+          predicates:
+            - Path=/*/*/blog/**
+      #service-log
+        - id: service-log
+          uri: lb://service-log
+          predicates:
+            - Path=/*/log/** ,/*/*/log/**
+      #service-message
+        - id: service-message
+          uri: lb://service-message
+          predicates:
+            - Path=/*/*/message/**

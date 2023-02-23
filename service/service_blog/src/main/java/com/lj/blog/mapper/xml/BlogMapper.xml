@@ -1,0 +1,318 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lj.blog.mapper.BlogMapper">
+	
+	<resultMap id="blogVo" type="com.lj.vo.BlogVo">
+		<id column="id" property="id"></id>
+		<result column="title" property="title"></result>
+		<result column="author_name" property="authorName"></result>
+		<result column="pic" property="pic"></result>
+		<result column="article_summary" property="articleSummary"></result>
+		<result column="views" property="views"></result>
+		<result column="likes" property="likes"></result>
+		<result column="create_time" property="createTime"></result>
+		<result column="publish_date" property="publishDate"></result>
+		<result column="update_time" property="updateTime"></result>
+		<result column="sorted" property="sorted"></result>
+		<result column="is_deleted" property="isDeleted"></result>
+		<result column="status" property="status"></result>
+		<result column="cover" property="cover"></result>
+		<result column="type_name" property="typeName"></result>
+		<result column="tag_names" property="tagNamesAsStr"></result>
+	</resultMap>
+	
+	<resultMap id="blogViewVo" type="com.lj.vo.BlogViewVo">
+		<id column="id" property="id"></id>
+		<result column="title" property="title"></result>
+		<result column="author_name" property="authorName"></result>
+		<result column="article_summary" property="articleSummary"></result>
+		<result column="content_html" property="contentHtml"></result>
+		<result column="views" property="views"></result>
+		<result column="likes" property="likes"></result>
+		<result column="create_time" property="createTime"></result>
+		<result column="publish_date" property="publishDate"></result>
+		<result column="update_time" property="updateTime"></result>
+		<result column="sorted" property="sorted"></result>
+		<result column="is_deleted" property="isDeleted"></result>
+		<result column="status" property="status"></result>
+		<result column="cover" property="cover"></result>
+		<result column="type_name" property="typeName"></result>
+		<result column="tag_names_str" property="tagNamesAsStr"></result>
+	</resultMap>
+	
+	<select id="selectPageQuery" resultMap="blogVo">
+		select
+			b.*,t.type_name,GROUP_CONCAT(distinct tg.tag_name) as tag_names,u.nick_name as author_name,u.pic as pic
+		from blog b
+			     left join type t on b.type_id = t.id
+			     left join blog_tag bt on b.id = bt.blog_id
+			     left join tag tg on bt.tag_id = tg.id
+			     left join xpz_user.tb_user u on u.id = b.author_id
+		<where>
+			<if test="blogQueryDto1.keyword != null">
+				(b.title like CONCAT('%',#{blogQueryDto1.keyword},'%')
+				or b.article_summary like CONCAT('%',#{blogQueryDto1.keyword},'%')
+				or u.nick_name like CONCAT('%',#{blogQueryDto1.keyword},'%'))
+			</if>
+			<if test="blogQueryDto1.typeId != null">
+				and b.type_id = #{blogQueryDto1.typeId}
+			</if>
+			<if test="blogQueryDto1.status != null">
+				and b.status= #{blogQueryDto1.status}
+			</if>
+			<if test="blogQueryDto1.createTime != null">
+				and DATE(b.create_time) = DATE(#{blogQueryDto1.createTime})
+			</if>
+			and b.is_deleted = 0 and bt.is_deleted = 0
+		</where>
+		group by b.id
+		order by b.create_time desc,b.update_time desc
+		limit #{page},#{size}
+	</select>
+	
+	<select id="selectCountQuery" resultType="long">
+		select
+		count(distinct b.id) as total
+		from blog b
+		left join type t on b.type_id = t.id
+		left join blog_tag bt on b.id = bt.blog_id
+		left join tag tg on bt.tag_id = tg.id
+		left join xpz_user.tb_user u on u.id = b.author_id
+		<where>
+			<if test="blogQueryDto1.keyword != null">
+				(b.title like CONCAT('%',#{blogQueryDto1.keyword},'%')
+				or b.article_summary like CONCAT('%',#{blogQueryDto1.keyword},'%')
+				or u.nick_name like CONCAT('%',#{blogQueryDto1.keyword},'%'))
+			</if>
+			<if test="blogQueryDto1.typeId != null">
+				and b.type_id = #{blogQueryDto1.typeId}
+			</if>
+			<if test="blogQueryDto1.status != null">
+				and b.status= #{blogQueryDto1.status}
+			</if>
+			<if test="blogQueryDto1.createTime != null">
+				and DATE(b.create_time) = DATE(#{blogQueryDto1.createTime})
+			</if>
+			and b.is_deleted = 0 and bt.is_deleted = 0
+		</where>
+	</select>
+	
+	<select id="reportsBlogTags" resultType="com.lj.vo.EchartsVo">
+		select
+			t.tag_name name,count(t.id) value
+		from tag t
+			inner join blog_tag bt on t.id = bt.tag_id
+		where t.is_deleted = 0 and bt.is_deleted = 0
+		group by t.id
+		order by value desc;
+	</select>
+	
+	<select id="reportsBlogTypes" resultType="com.lj.vo.EchartsVo">
+		select
+			t.type_name name,if(b.type_id is null,0,count(t.id)) value
+		from type t
+			left join blog b on t.id = b.type_id
+		where t.parent_id != -1
+		and t.is_deleted = 0 and b.is_deleted = 0
+		group by t.id
+		order by value desc
+	</select>
+	
+	<select id="selectPageQueryPublish" resultMap="blogVo">
+		select
+		b.*,t.type_name,GROUP_CONCAT(distinct tg.tag_name) as tag_names,u.nick_name as author_name,u.pic as pic
+		from blog b
+		left join type t on b.type_id = t.id
+		left join blog_tag bt on b.id = bt.blog_id
+		left join tag tg on bt.tag_id = tg.id
+		left join xpz_user.tb_user u on u.id = b.author_id
+		<where>
+			b.status = 1 and b.is_deleted = 0 and bt.is_deleted = 0
+		</where>
+		group by b.id
+		limit #{page},#{size}
+	</select>
+	
+	<select id="selectCountQueryPublish" resultType="java.lang.Long" parameterType="com.lj.vo.BlogQueryDto2">
+		select
+		count(distinct b.id) as total
+		from blog b
+		left join type t on b.type_id = t.id
+		left join blog_tag bt on b.id = bt.blog_id
+		left join tag tg on bt.tag_id = tg.id
+		left join xpz_user.tb_user u on u.id = b.author_id
+		<where>
+			b.status = 1 and b.is_deleted = 0 and bt.is_deleted = 0
+		</where>
+	</select>
+	
+	<select id="searchById" resultMap="blogViewVo" parameterType="java.lang.Long">
+		select
+			b.*,bd.content_html,t.type_name,GROUP_CONCAT(distinct tg.tag_name) as tag_names_str
+		     ,u.nick_name as author_name,u.pic as pic
+		from blog b
+			     left join blog_detail bd on b.id = bd.blog_id
+		    	 left join type t on t.id = b.type_id
+			     left join blog_tag bt on b.id = bt.blog_id
+			     left join tag tg on bt.tag_id = tg.id
+			     left join xpz_user.tb_user u on b.author_id = u.id
+		where b.id = #{id}
+		and b.is_deleted = 0 and bt.is_deleted = 0
+		group by b.id,bd.id;
+	</select>
+	
+	<select id="selectPageQueryMyBlog" resultMap="blogVo">
+		select
+		b.*,t.type_name,GROUP_CONCAT(distinct tg.tag_name) as tag_names,u.nick_name as author_name,u.pic as pic
+		from blog b
+		left join type t on b.type_id = t.id
+		left join blog_tag bt on b.id = bt.blog_id
+		left join tag tg on bt.tag_id = tg.id
+		left join xpz_user.tb_user u on u.id = b.author_id
+		<where>
+			<if test="blogQueryDto.keyword != null">
+				(b.title like CONCAT('%',#{blogQueryDto.keyword},'%')
+				or b.article_summary like CONCAT('%',#{blogQueryDto.keyword},'%'))
+			</if>
+			<if test="blogQueryDto.typeId != null">
+				and b.type_id = #{blogQueryDto.typeId}
+			</if>
+			<if test="blogQueryDto.publishTime != null">
+				and DATE(b.publish_date) = DATE(#{blogQueryDto.publishTime})
+			</if>
+			and b.is_deleted = 0
+			and bt.is_deleted = 0
+			and b.author_id = #{blogQueryDto.userId}
+		</where>
+		group by b.id
+		order by b.publish_date desc,b.update_time desc
+		limit #{page},#{size}
+	</select>
+	
+	<select id="selectPageQueryMyBlogCount" resultType="java.lang.Long">
+		select
+		count(distinct b.id) as total
+		from blog b
+		left join type t on b.type_id = t.id
+		left join blog_tag bt on b.id = bt.blog_id
+		left join tag tg on bt.tag_id = tg.id
+		left join xpz_user.tb_user u on u.id = b.author_id
+		<where>
+			<if test="blogQueryDto.keyword != null">
+				(b.title like CONCAT('%',#{blogQueryDto.keyword},'%')
+				or b.article_summary like CONCAT('%',#{blogQueryDto.keyword},'%'))
+			</if>
+			<if test="blogQueryDto.typeId != null">
+				and b.type_id = #{blogQueryDto.typeId}
+			</if>
+			<if test="blogQueryDto.publishTime != null">
+				and DATE(b.publish_date) = DATE(#{blogQueryDto.publishTime})
+			</if>
+			and b.is_deleted = 0
+			and bt.is_deleted = 0
+			and b.author_id = #{blogQueryDto.userId}
+		</where>
+	</select>
+	
+	<select id="searchByKeyWordCount" resultType="java.lang.Long" parameterType="java.lang.String">
+		select
+		count(distinct id)
+		from blog b
+		<where>
+			<if test="keyword != null">
+				b.title like CONCAT('%',(#{keyword}),'%')
+			</if>
+			and bt.is_deleted = 0
+			and b.is_deleted = 0
+			and b.status = 1
+		</where>
+	</select>
+	
+	<select id="searchByKeyWord" resultMap="blogVo">
+		select
+			b.*,t.type_name,GROUP_CONCAT(distinct tg.tag_name) as tag_names,u.nick_name as author_name,u.pic as pic
+		from blog b
+			     left join type t on b.type_id = t.id
+			     left join blog_tag bt on b.id = bt.blog_id
+			     left join tag tg on bt.tag_id = tg.id
+			     left join xpz_user.tb_user u on u.id = b.author_id
+		<where>
+			<if test="keyword != null">
+				b.title like CONCAT('%',(#{keyword}),'%')
+			</if>
+			and b.is_deleted = 0 and b.status = 1 and bt.is_deleted = 0
+		</where>
+		group by b.id
+		order by
+		<choose>
+			<when test="sortWord != null and sortWord == 0">
+				b.publish_date desc
+			</when>
+			<when test="sortWord != null and sortWord == 1">
+				b.views desc
+			</when>
+			<when test="sortWord != null and sortWord == 2">
+				b.likes desc
+			</when>
+			<otherwise>
+				b.publish_date desc
+			</otherwise>
+		</choose>
+		limit #{page},#{size}
+	</select>
+	
+	<select id="selectAllBlogDocument" resultType="com.lj.blog.es.BlogDocument">
+		select
+			b.*,t.type_name,u.nick_name as author_name,u.pic as pic
+		from blog b
+			     left join type t on b.type_id = t.id
+			     left join xpz_user.tb_user u on u.id = b.author_id
+		where b.is_deleted = 0 and b.status = 1
+	</select>
+	
+	<select id="selectOneBlogDocument" resultType="com.lj.blog.es.BlogDocument">
+		select
+			b.*,t.type_name,u.nick_name as author_name,u.pic as pic
+		from blog b
+			     left join type t on b.type_id = t.id
+			     left join xpz_user.tb_user u on u.id = b.author_id
+		where b.id = #{id} and b.is_deleted = 0 and b.status = 1
+	</select>
+	
+	<select id="selectFollowUserBlog" resultMap="blogVo">
+		select
+		b.*,t.type_name,GROUP_CONCAT(distinct tg.tag_name) as tag_names,u.nick_name as author_name,u.pic as pic
+		from blog b
+		left join type t on b.type_id = t.id
+		left join blog_tag bt on b.id = bt.blog_id
+		left join tag tg on bt.tag_id = tg.id
+		left join xpz_user.tb_user u on u.id = b.author_id
+		<where>
+			b.status = 1 and b.is_deleted = 0 and bt.is_deleted = 0
+			and b.author_id in
+			<foreach collection="myFollowUsers" separator="," item="item" open="(" close=")">
+				#{item}
+			</foreach>
+		</where>
+		group by b.id
+		order by b.publish_date desc,b.update_time desc
+		limit #{page},#{size}
+	</select>
+	
+	<select id="selectFollowUserBlogCount" resultType="long">
+		select
+		count(distinct b.id) as total
+		from blog b
+		left join type t on b.type_id = t.id
+		left join blog_tag bt on b.id = bt.blog_id
+		left join tag tg on bt.tag_id = tg.id
+		left join xpz_user.tb_user u on u.id = b.author_id
+		<where>
+			b.status = 1 and b.is_deleted = 0 and bt.is_deleted = 0
+			and b.author_id in
+			<foreach collection="myFollowUsers" separator="," item="item" open="(" close=")">
+				#{item}
+			</foreach>
+		</where>
+	</select>
+</mapper>

@@ -4,7 +4,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.lj.base.Result;
 import com.lj.model.blog.LeaveMessage;
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.lj.vo.LeaveMessageQueryDto;
+import com.lj.vo.admin.LeaveMessageQueryDto;
 
 import java.util.List;
 

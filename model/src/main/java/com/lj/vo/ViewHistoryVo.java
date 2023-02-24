@@ -1,6 +1,7 @@
 package com.lj.vo;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.lj.vo.user.HotBlogVo;
 import lombok.Data;
 
 import java.util.Date;

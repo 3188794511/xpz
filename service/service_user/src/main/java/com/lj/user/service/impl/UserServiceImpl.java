@@ -1,5 +1,6 @@
 package com.lj.user.service.impl;
 
+import com.alibaba.nacos.common.util.Md5Utils;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -11,10 +12,11 @@ import com.lj.user.service.UserService;
 import com.lj.util.JwtTokenUtil;
 import com.lj.util.UserInfoContext;
 import com.lj.util.generateUtil;
-import com.lj.vo.LoginUserDto;
-import com.lj.vo.UserInfoDto;
-import com.lj.vo.UserInfoVo;
-import com.lj.vo.UserQueryDto;
+import com.lj.vo.*;
+import com.lj.vo.admin.UserBaseInfo;
+import com.lj.vo.admin.UserUpdateDto;
+import com.lj.vo.user.UserInfoDto;
+import com.lj.vo.user.UserInfoVo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,6 +61,46 @@ public class UserServiceImpl extends ServiceImpl<UserMapper,User> implements Use
     }
 
     /**
+     * 管理员查询用户信息
+     * @param id
+     * @return
+     */
+    public UserBaseInfo getUserBaseInfo(Long id) {
+        User user = baseMapper.selectById(id);
+        UserBaseInfo userBaseInfo = new UserBaseInfo();
+        BeanUtils.copyProperties(user,userBaseInfo);
+        return userBaseInfo;
+    }
+
+    /**
+     * 管理员创建用户
+     * @param user
+     * @return
+     */
+    public Result createUser(User user) {
+        User isExist = queryUserByAccount(user.getAccount());
+        if(Objects.nonNull(isExist)){
+            return Result.fail().message("账号已存在");
+        }
+        String pwd = Md5Utils.getMD5(user.getPassword().getBytes());
+        user.setPassword(pwd);
+        boolean isSuccess = baseMapper.insert(user) > 0;
+        return isSuccess ? Result.ok().message("创建用户成功") : Result.fail().message("创建用户失败");
+    }
+
+    /**
+     * 管理员修改用户信息
+     * @param userInfoDto
+     * @return
+     */
+    public Result adminUpdateUser(UserUpdateDto userInfoDto) {
+        User user = new User();
+        BeanUtils.copyProperties(userInfoDto,user);
+        boolean isSuccess = baseMapper.updateById(user) > 0;
+        return isSuccess ? Result.ok().message("用户信息修改成功") : Result.fail().message("用户信息修改失败");
+    }
+
+    /**
      * 后台根据token查询用户信息
      * @param token
      * @return
@@ -97,16 +139,24 @@ public class UserServiceImpl extends ServiceImpl<UserMapper,User> implements Use
      * @return
      */
     public Result register(LoginUserDto loginUserDto) {
-        User userExist = login(loginUserDto);
+        User userExist = queryUserByAccount(loginUserDto.getAccount());
         //账号已存在
         if(!StringUtils.isEmpty(userExist)){
             return Result.fail().message("账号已存在");
         }
         User user = new User();
-        BeanUtils.copyProperties(loginUserDto,user);
+        BeanUtils.copyProperties(loginUserDto,user,"password");
+        String pwd = Md5Utils.getMD5(loginUserDto.getPassword().getBytes());
+        user.setPassword(pwd);
         user.setNickName(generateUtil.generateUserName());
         boolean isSuccess = baseMapper.insert(user) > 0;
         return isSuccess ? Result.ok().message("注册成功") : Result.fail().message("注册失败");
+    }
+
+    private User queryUserByAccount(String account) {
+        LambdaQueryWrapper<User> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(User::getAccount,account);
+        return baseMapper.selectOne(wrapper);
     }
 
     /**
@@ -168,6 +218,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper,User> implements Use
      * @return
      */
     private User login(LoginUserDto loginUserDto){
+        //将密码加密
+        String pwd = Md5Utils.getMD5(loginUserDto.getPassword().getBytes());
+        loginUserDto.setPassword(pwd);
         LambdaQueryWrapper<User> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(User::getAccount, loginUserDto.getAccount())
                 .eq(User::getPassword, loginUserDto.getPassword());

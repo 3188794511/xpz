@@ -5,10 +5,10 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.lj.annotation.MyLog;
 import com.lj.base.Result;
 import com.lj.blog.service.BlogService;
-import com.lj.vo.BlogDto;
+import com.lj.vo.user.BlogDto;
 import com.lj.vo.BlogQueryDto1;
 import com.lj.vo.BlogVo;
-import com.lj.vo.ReasonVo;
+import com.lj.vo.admin.ReasonVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -71,8 +71,8 @@ public class BlogController {
      * @param blogQueryDto1
      * @return
      */
-    @GetMapping("/{page}/{size}")
-    public Result pageQueryBlog(@PathVariable Long page, @PathVariable Long size, BlogQueryDto1 blogQueryDto1){
+    @PostMapping("/{page}/{size}")
+    public Result pageQueryBlog(@PathVariable Long page, @PathVariable Long size,@RequestBody BlogQueryDto1 blogQueryDto1){
         Page<BlogVo> res = blogService.pageQueryBlog(page, size, blogQueryDto1);
         return Result.ok(res);
     }

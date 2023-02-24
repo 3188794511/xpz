@@ -4,6 +4,7 @@ import lombok.Data;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * 博客查询条件dto
@@ -14,9 +15,10 @@ public class BlogQueryDto1 {
     private String keyword;
     //分类
     private Long typeId;
+    private List<Long> typeIds;
     //状态
     private Integer status;
     //创建时间
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
     private Date createTime;
 }

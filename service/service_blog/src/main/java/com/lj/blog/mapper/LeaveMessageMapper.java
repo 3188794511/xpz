@@ -2,7 +2,7 @@ package com.lj.blog.mapper;
 
 import com.lj.model.blog.LeaveMessage;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.lj.vo.LeaveMessageQueryDto;
+import com.lj.vo.admin.LeaveMessageQueryDto;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 

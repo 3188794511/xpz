@@ -21,7 +21,7 @@
 		<result column="tag_names" property="tagNamesAsStr"></result>
 	</resultMap>
 	
-	<resultMap id="blogViewVo" type="com.lj.vo.BlogViewVo">
+	<resultMap id="blogViewVo" type="com.lj.vo.user.BlogViewVo">
 		<id column="id" property="id"></id>
 		<result column="title" property="title"></result>
 		<result column="author_name" property="authorName"></result>
@@ -97,7 +97,7 @@
 		</where>
 	</select>
 	
-	<select id="reportsBlogTags" resultType="com.lj.vo.EchartsVo">
+	<select id="reportsBlogTags" resultType="com.lj.vo.admin.EchartsVo">
 		select
 			t.tag_name name,count(t.id) value
 		from tag t
@@ -107,7 +107,7 @@
 		order by value desc;
 	</select>
 	
-	<select id="reportsBlogTypes" resultType="com.lj.vo.EchartsVo">
+	<select id="reportsBlogTypes" resultType="com.lj.vo.admin.EchartsVo">
 		select
 			t.type_name name,if(b.type_id is null,0,count(t.id)) value
 		from type t
@@ -133,7 +133,7 @@
 		limit #{page},#{size}
 	</select>
 	
-	<select id="selectCountQueryPublish" resultType="java.lang.Long" parameterType="com.lj.vo.BlogQueryDto2">
+	<select id="selectCountQueryPublish" resultType="java.lang.Long" parameterType="com.lj.vo.user.BlogQueryDto2">
 		select
 		count(distinct b.id) as total
 		from blog b
@@ -170,15 +170,18 @@
 		left join tag tg on bt.tag_id = tg.id
 		left join xpz_user.tb_user u on u.id = b.author_id
 		<where>
+			<if test="blogQueryDto.status != null">
+				b.status = #{blogQueryDto.status}
+			</if>
 			<if test="blogQueryDto.keyword != null">
-				(b.title like CONCAT('%',#{blogQueryDto.keyword},'%')
+				and (b.title like CONCAT('%',#{blogQueryDto.keyword},'%')
 				or b.article_summary like CONCAT('%',#{blogQueryDto.keyword},'%'))
 			</if>
 			<if test="blogQueryDto.typeId != null">
 				and b.type_id = #{blogQueryDto.typeId}
 			</if>
-			<if test="blogQueryDto.publishTime != null">
-				and DATE(b.publish_date) = DATE(#{blogQueryDto.publishTime})
+			<if test="blogQueryDto.createTime != null">
+				and DATE(b.create_time) = DATE(#{blogQueryDto.createTime})
 			</if>
 			and b.is_deleted = 0
 			and bt.is_deleted = 0
@@ -205,8 +208,8 @@
 			<if test="blogQueryDto.typeId != null">
 				and b.type_id = #{blogQueryDto.typeId}
 			</if>
-			<if test="blogQueryDto.publishTime != null">
-				and DATE(b.publish_date) = DATE(#{blogQueryDto.publishTime})
+			<if test="blogQueryDto.createTime != null">
+				and DATE(b.create_time) = DATE(#{blogQueryDto.createTime})
 			</if>
 			and b.is_deleted = 0
 			and bt.is_deleted = 0

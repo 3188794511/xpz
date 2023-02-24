@@ -6,7 +6,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.lj.log.mapper.LogMapper;
 import com.lj.log.service.LogService;
 import com.lj.model.log.MyLog;
-import com.lj.vo.LogQueryDto;
+import com.lj.vo.admin.LogQueryDto;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 

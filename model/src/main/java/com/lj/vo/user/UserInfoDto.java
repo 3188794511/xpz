@@ -1,4 +1,4 @@
-package com.lj.vo;
+package com.lj.vo.user;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
@@ -7,8 +7,6 @@ import java.util.Date;
 
 @Data
 public class UserInfoDto {
-    private String account;
-    private String password;
     private String pic;
     private Integer sex;
     private String nickName;

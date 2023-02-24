@@ -2,7 +2,7 @@ package com.lj;
 
 import com.lj.log.MyLogApplication;
 import com.lj.log.service.LogService;
-import com.lj.vo.LogQueryDto;
+import com.lj.vo.admin.LogQueryDto;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;

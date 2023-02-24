@@ -1,16 +1,17 @@
-package com.lj.vo;
+package com.lj.vo.admin;
 
 import lombok.Data;
 
 import java.util.Date;
 
 @Data
-public class UserInfoVo {
+public class UserBaseInfo {
     private Long id;
+    private String account;
     private String nickName;
     private String pic;
     private Date birthday;
     private Integer sex;
     private String selfDescribe;
-    private Integer isOnline;  //是否在线
+    private String role;
 }

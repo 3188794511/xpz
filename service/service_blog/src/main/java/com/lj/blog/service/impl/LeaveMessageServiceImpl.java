@@ -10,7 +10,7 @@ import com.lj.client.UserClientService;
 import com.lj.model.blog.LeaveMessage;
 import com.lj.model.user.User;
 import com.lj.util.UserInfoContext;
-import com.lj.vo.LeaveMessageQueryDto;
+import com.lj.vo.admin.LeaveMessageQueryDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

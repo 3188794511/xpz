@@ -1,4 +1,4 @@
-package com.lj.vo;
+package com.lj.vo.user;
 
 import com.lj.model.blog.Blog;
 import lombok.Data;

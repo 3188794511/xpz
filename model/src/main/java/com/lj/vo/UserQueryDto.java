@@ -8,6 +8,6 @@ import java.util.Date;
 @Data
 public class UserQueryDto {
     private String keyword;
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
     private Date createTime;
 }

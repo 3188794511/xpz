@@ -5,6 +5,7 @@ import com.lj.annotation.MyLog;
 import com.lj.base.Result;
 import com.lj.blog.service.TypeService;
 import com.lj.model.blog.Type;
+import com.lj.vo.TypeVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,7 +25,6 @@ public class TypeController {
     @Autowired
     private TypeService typeService;
 
-
     /**
      * 查询所有分类以及它们的子分类
      * @return
@@ -33,6 +33,16 @@ public class TypeController {
     public Result listByTree(){
         List<Type> typeList = typeService.listByTree();
         return Result.ok(typeList);
+    }
+
+    /**
+     * 查询所有分类以及它们的子分类
+     * @return
+     */
+    @GetMapping("/list/type-tree")
+    public Result listTypeByTree(){
+        List<TypeVo> typeVoTree = typeService.listTypeVoTree();
+        return Result.ok(typeVoTree);
     }
 
     /**

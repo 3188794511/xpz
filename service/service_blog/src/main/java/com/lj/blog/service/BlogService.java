@@ -7,6 +7,7 @@ import com.lj.base.Result;
 import com.lj.model.blog.Blog;
 import com.lj.blog.es.BlogDocument;
 import com.lj.vo.*;
+import com.lj.vo.user.*;
 
 import java.util.List;
 import java.util.Map;

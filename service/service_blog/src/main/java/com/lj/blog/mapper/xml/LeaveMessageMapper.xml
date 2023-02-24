@@ -21,7 +21,7 @@
 		limit #{page},#{size}
 	</select>
 	
-	<select id="selectCountQuery" resultType="java.lang.Long" parameterType="com.lj.vo.LeaveMessageQueryDto">
+	<select id="selectCountQuery" resultType="java.lang.Long" parameterType="com.lj.vo.admin.LeaveMessageQueryDto">
 		select
 		count(distinct l.id)
 		from leave_message l

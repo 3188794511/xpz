@@ -5,9 +5,11 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.lj.base.Result;
 import com.lj.model.user.User;
 import com.lj.vo.LoginUserDto;
-import com.lj.vo.UserInfoDto;
-import com.lj.vo.UserInfoVo;
+import com.lj.vo.user.UserInfoDto;
+import com.lj.vo.user.UserInfoVo;
 import com.lj.vo.UserQueryDto;
+import com.lj.vo.admin.UserBaseInfo;
+import com.lj.vo.admin.UserUpdateDto;
 
 import java.util.List;
 import java.util.Set;
@@ -47,4 +49,10 @@ public interface UserService extends IService<User> {
     boolean addChatUser(Long userId, Long id);
 
     boolean deleteChatUser(Long userId, Long id);
+
+    Result createUser(User user);
+
+    Result adminUpdateUser(UserUpdateDto user);
+
+    UserBaseInfo getUserBaseInfo(Long id);
 }

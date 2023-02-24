@@ -7,6 +7,8 @@ import com.lj.model.user.User;
 import com.lj.user.service.UserService;
 import com.lj.vo.LoginUserDto;
 import com.lj.vo.UserQueryDto;
+import com.lj.vo.admin.UserBaseInfo;
+import com.lj.vo.admin.UserUpdateDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -56,21 +58,19 @@ public class AdminController {
      */
     @GetMapping("/get/{id}")
     public Result getById(@PathVariable Long id){
-        User user = userService.getById(id);
+        UserBaseInfo user = userService.getUserBaseInfo(id);
         return Result.ok(user);
     }
 
     @MyLog(type = "admin",value = "创建用户")
     @PostMapping("/save")
     public Result saveUser(@RequestBody User user){
-        boolean isSuccess = userService.save(user);
-        return isSuccess ? Result.ok() : Result.fail();
+        return userService.createUser(user);
     }
 
     @MyLog(type = "admin",value = "修改用户信息")
     @PutMapping("/update")
-    public Result updateUser(@RequestBody User user){
-        boolean isSuccess = userService.updateById(user);
-        return isSuccess ? Result.ok() : Result.fail();
+    public Result updateUser(@RequestBody UserUpdateDto user){
+        return userService.adminUpdateUser(user);
     }
 }

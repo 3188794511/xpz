@@ -25,6 +25,9 @@ import com.lj.model.user.User;
 import com.lj.model.user.ViewHistory;
 import com.lj.util.*;
 import com.lj.vo.*;
+import com.lj.vo.admin.EchartsVo;
+import com.lj.vo.user.*;
+import org.apache.logging.log4j.util.Strings;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.SetOperations;
@@ -162,13 +165,17 @@ public class BlogServiceImpl extends ServiceImpl<BlogMapper, Blog> implements Bl
     }
 
     /**
-     * 分页条件查询帖子
+     * 管理员分页条件查询帖子
      * @param blogQueryDto1
      * @return
      */
     public Page<BlogVo> pageQueryBlog(Long page, Long size, BlogQueryDto1 blogQueryDto1) {
         Page<BlogVo> res = new Page<>(page,size);
         page = (page - 1) * size;//起始行偏移量
+        List<Long> typeIds = blogQueryDto1.getTypeIds();
+        if(Objects.nonNull(typeIds) && !typeIds.isEmpty()){
+            blogQueryDto1.setTypeId(typeIds.get(typeIds.size() - 1));
+        }
         List<BlogVo> blogVos = baseMapper.selectPageQuery(page,size, blogQueryDto1);
         blogVos.stream().forEach(b -> {
             if(!StringUtils.isEmpty(b.getTagNamesAsStr())){
@@ -469,6 +476,10 @@ public class BlogServiceImpl extends ServiceImpl<BlogMapper, Blog> implements Bl
     public Page<BlogVo> pageQueryMyBlog(Long page, Long size, BlogQueryDto3 blogQueryDto) {
         Page<BlogVo> res = new Page<>(page,size);
         page = (page - 1) * size;//起始行偏移量
+        List<Long> typeIds = blogQueryDto.getTypeIds();
+        if(Objects.nonNull(typeIds) && !typeIds.isEmpty()){
+            blogQueryDto.setTypeId(typeIds.get(typeIds.size() - 1));
+        }
         List<BlogVo> blogVos = baseMapper.selectPageQueryMyBlog(page,size, blogQueryDto);
         blogVos.stream().forEach(b -> {
             if(!StringUtils.isEmpty(b.getTagNamesAsStr())){
@@ -677,14 +688,21 @@ public class BlogServiceImpl extends ServiceImpl<BlogMapper, Blog> implements Bl
      */
     public List<String> completeKeyword(String keyword) {
         LambdaEsQueryWrapper<BlogDocument> wrapper = new LambdaEsQueryWrapper<>();
-        wrapper.index(EsConstant.BLOG_INDEX)
-                .match(BlogDocument::getTitle,keyword)
-                .select("title")
-                .sortByScore();
+        if (Strings.isNotBlank(keyword)) {
+            wrapper.index(EsConstant.BLOG_INDEX)
+                    .match(BlogDocument::getTitle,keyword)
+                    .select(BlogDocument::getTitle)
+                    .sortByScore();
+        }
         List<BlogDocument> blogDocuments = blogDocumentMapper.selectList(wrapper);
         List<String> keywords = new ArrayList<>();
         if(!blogDocuments.isEmpty()){
-            keywords = blogDocuments.stream().map(i -> i.getTitle()).collect(Collectors.toList());
+            blogDocuments.stream().forEach(i -> {
+                String title = i.getTitle();
+                if(Strings.isNotBlank(title)){
+                    keywords.add(title);
+                }
+            });
         }
         return keywords;
     }

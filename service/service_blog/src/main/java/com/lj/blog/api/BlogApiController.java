@@ -9,6 +9,7 @@ import com.lj.blog.es.BlogDocument;
 import com.lj.util.JwtTokenUtil;
 import com.lj.util.UserInfoContext;
 import com.lj.vo.*;
+import com.lj.vo.user.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -99,8 +100,8 @@ public class BlogApiController {
      * @param blogQueryDto
      * @return
      */
-    @GetMapping("/my-blog/{page}/{size}")
-    public Result pageQueryMyBlog(@PathVariable Long page, @PathVariable Long size, BlogQueryDto3 blogQueryDto){
+    @PostMapping("/my-blog/{page}/{size}")
+    public Result pageQueryMyBlog(@PathVariable Long page, @PathVariable Long size,@RequestBody BlogQueryDto3 blogQueryDto){
         blogQueryDto.setUserId(UserInfoContext.get());
         Page<BlogVo> res = blogService.pageQueryMyBlog(page, size, blogQueryDto);
         return Result.ok(res);

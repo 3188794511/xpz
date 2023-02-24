@@ -1,15 +1,20 @@
 package com.lj.blog;
 
+import com.alibaba.nacos.common.util.Md5Utils;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.lj.blog.es.BlogDocument;
 import com.lj.blog.mapper.BlogMapper;
 import com.lj.blog.mapper.CommentMapper;
 import com.lj.blog.mapper.es.BlogDocumentMapper;
 import com.lj.blog.service.*;
 import com.lj.model.blog.Blog;
-import com.lj.blog.es.BlogDocument;
 import com.lj.util.SendMessageUtil;
 import com.lj.vo.*;
+import com.lj.vo.admin.LeaveMessageQueryDto;
+import com.lj.vo.user.BlogQueryDto2;
+import com.lj.vo.user.BlogSearchDto;
+import com.lj.vo.user.BlogViewVo;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,8 +47,9 @@ public class BlogApplicationTest {
 
     @Test
     void name() {
-        List<TypeVo> typeVoTree = typeService.listTypeVoTree();
-        System.out.println(typeVoTree);
+        String pwd = "12345";
+        String md5 = Md5Utils.getMD5(pwd.getBytes());
+        System.out.println(md5);
     }
 
     @Test

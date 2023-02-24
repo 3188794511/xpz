@@ -4,6 +4,10 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.lj.model.blog.Blog;
 import com.lj.blog.es.BlogDocument;
 import com.lj.vo.*;
+import com.lj.vo.admin.EchartsVo;
+import com.lj.vo.user.BlogQueryDto2;
+import com.lj.vo.user.BlogQueryDto3;
+import com.lj.vo.user.BlogViewVo;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 

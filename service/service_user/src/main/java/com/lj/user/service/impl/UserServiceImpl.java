@@ -12,11 +12,13 @@ import com.lj.user.service.UserService;
 import com.lj.util.JwtTokenUtil;
 import com.lj.util.UserInfoContext;
 import com.lj.util.generateUtil;
-import com.lj.vo.*;
+import com.lj.vo.LoginUserDto;
+import com.lj.vo.UserQueryDto;
 import com.lj.vo.admin.UserBaseInfo;
 import com.lj.vo.admin.UserUpdateDto;
 import com.lj.vo.user.UserInfoDto;
 import com.lj.vo.user.UserInfoVo;
+import com.lj.vo.user.UserSecretInfo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -70,6 +72,22 @@ public class UserServiceImpl extends ServiceImpl<UserMapper,User> implements Use
         UserBaseInfo userBaseInfo = new UserBaseInfo();
         BeanUtils.copyProperties(user,userBaseInfo);
         return userBaseInfo;
+    }
+
+    /**
+     * 修改用户密码
+     * @param userSecretInfo
+     * @param userId
+     * @return
+     */
+    public Result updateUserPwd(UserSecretInfo userSecretInfo, Long userId) {
+        User user = new User();
+        user.setId(userId);
+        String originPwd = userSecretInfo.getPassword();
+        String pwd = Md5Utils.getMD5(originPwd.getBytes());
+        user.setPassword(pwd);
+        boolean isSuccess = baseMapper.updateById(user) > 0;
+        return isSuccess ? Result.ok().message("修改密码成功") : Result.fail().message("修改密码失败");
     }
 
     /**

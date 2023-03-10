@@ -85,7 +85,4 @@ public class MyLog implements Serializable {
     @TableField("end_time")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date endTime;
-
-
-
 }

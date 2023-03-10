@@ -9,9 +9,10 @@ import com.lj.user.service.UserService;
 import com.lj.user.service.ViewHistoryService;
 import com.lj.util.JwtTokenUtil;
 import com.lj.vo.LoginUserDto;
+import com.lj.vo.ViewHistoryVo;
 import com.lj.vo.user.UserInfoDto;
 import com.lj.vo.user.UserInfoVo;
-import com.lj.vo.ViewHistoryVo;
+import com.lj.vo.user.UserSecretInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.SetOperations;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -99,6 +100,18 @@ public class UserApiController {
     }
 
     /**
+     * 修改用户密码
+     * @return
+     */
+    @PutMapping("/update/pwd")
+    @MyLog("修改用户密码")
+    public Result updateUserInfo(@RequestBody UserSecretInfo userSecretInfo, HttpServletRequest request){
+        String token = request.getHeader("token");
+        Long userId = JwtTokenUtil.getUserId(token);
+        return userService.updateUserPwd(userSecretInfo,userId);
+    }
+
+    /**
      * 关注 取关一位用户
      * @param request
      * @param followUserId
@@ -145,7 +158,7 @@ public class UserApiController {
      * @param userId
      * @return
      */
-    @GetMapping("/follow/{userId}/count")
+    @GetMapping("/follow-info/{userId}/count")
     public Result myFollowedUserCount(@PathVariable Long userId){
         return Result.ok(userService.myFollowUserCount(userId));
     }
@@ -155,7 +168,7 @@ public class UserApiController {
      * @param userId
      * @return
      */
-    @GetMapping("/follow-me/{userId}/count")
+    @GetMapping("/follow-me-info/{userId}/count")
     public Result followedMeUserCount(@PathVariable Long userId){
         return Result.ok(userService.followMeUserCount(userId));
     }

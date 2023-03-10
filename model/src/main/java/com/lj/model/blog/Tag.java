@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
+import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
 
 @Data
@@ -16,6 +17,7 @@ public class Tag extends BaseModel implements Serializable {
      * 标签名
      */
     @TableField("tag_name")
+    @NotBlank(message = "标签名不能为空")
     private String tagName;
 
     /**

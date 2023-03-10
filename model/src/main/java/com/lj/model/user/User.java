@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.lj.base.BaseModel;
 import lombok.Data;
 
+import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
 import java.util.Date;
 
@@ -19,12 +20,14 @@ public class User extends BaseModel implements Serializable {
      * 用户账号
      */
     @TableField("account")
+    @NotBlank(message = "用户账号不能为空")
     private String account;
 
     /**
      * 用户密码
      */
     @TableField("password")
+    @NotBlank(message = "用户密码不能为空")
     private String password;
 
     /**

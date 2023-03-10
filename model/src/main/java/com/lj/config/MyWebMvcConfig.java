@@ -32,7 +32,7 @@ public class MyWebMvcConfig implements WebMvcConfigurer {
          */
         registry.addInterceptor(new UserInterceptor()).addPathPatterns("/xpz/api/blog/comment/save",
                         "/xpz/api/blog/comment/likes/**"
-                        , "/xpz/api/user/update/info"
+                        ,"/xpz/api/user/update/**"
                         ,"/xpz/api/user/info"
                         ,"/xpz/api/user/follow/**"
                         ,"/xpz/api/blog/file/user-upload"
@@ -41,6 +41,9 @@ public class MyWebMvcConfig implements WebMvcConfigurer {
                         ,"/xpz/api/blog/blog/my-blog/**"
                         ,"/xpz/api/message/**"
                         ,"/xpz/api/user/history/**")
-                .excludePathPatterns("/xpz/api/user/history/save");
+                .excludePathPatterns("/xpz/api/user" +
+                                "/history/save"
+                        ,"/xpz/api/user/follow-info/**"
+                        ,"/xpz/api/user/follow-me-info/**");
     }
 }

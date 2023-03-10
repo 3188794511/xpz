@@ -10,6 +10,7 @@ import com.lj.vo.user.UserInfoVo;
 import com.lj.vo.UserQueryDto;
 import com.lj.vo.admin.UserBaseInfo;
 import com.lj.vo.admin.UserUpdateDto;
+import com.lj.vo.user.UserSecretInfo;
 
 import java.util.List;
 import java.util.Set;
@@ -55,4 +56,6 @@ public interface UserService extends IService<User> {
     Result adminUpdateUser(UserUpdateDto user);
 
     UserBaseInfo getUserBaseInfo(Long id);
+
+    Result updateUserPwd(UserSecretInfo UserSecretInfo, Long userId);
 }

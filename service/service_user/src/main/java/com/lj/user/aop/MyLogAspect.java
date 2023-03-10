@@ -18,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -65,7 +66,7 @@ public class MyLogAspect {
             //方法名
             String methodName = className + "." + signature.getMethod().getName();
             //方法参数
-            List<Object> params = Arrays.stream(proceedingJoinPoint.getArgs()).filter(i -> !(i instanceof MultipartFile)).collect(Collectors.toList());
+            List<Object> params = Arrays.stream(proceedingJoinPoint.getArgs()).filter(i -> !(i instanceof MultipartFile || i instanceof HttpServletRequest)).collect(Collectors.toList());
             String paramsStr = JSON.toJSONString(params);
             //方法返回值
             String resStr = JSON.toJSONString(res);

@@ -37,7 +37,7 @@ public class JwtTokenUtil {
     public static String createToken(Long userId, String userName,long tokenExpiration) {
         String token = Jwts.builder()
                 //设置token分类
-                .setSubject("GGKT-USER")
+                .setSubject("XPZ-USER")
                 //token字符串有效时长
                 .setExpiration(new Date(System.currentTimeMillis() + tokenExpiration))
                 //私有部分（用户信息）

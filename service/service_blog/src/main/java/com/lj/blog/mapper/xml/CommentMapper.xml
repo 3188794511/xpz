@@ -17,7 +17,7 @@
 	</resultMap>
 	<select id="selectCommentPage" resultMap="baseComment">
 		select
-		c.*,b.title as blog_title,u.nick_name as user_name,IF(u1.id is null ,'无',u1.nick_name) as replay_user
+		c.*,b.title as blog_title,u.nick_name as user_name,u1.nick_name as replay_user
 		from comment c
 		inner join blog b on c.blog_id = b.id
 		inner join xpz_user.tb_user u on c.user_id = u.id

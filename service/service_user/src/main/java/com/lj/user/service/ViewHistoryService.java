@@ -1,10 +1,9 @@
 package com.lj.user.service;
 
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.lj.model.user.ViewHistory;
 import com.lj.vo.ViewHistoryVo;
-
-import java.util.List;
 
 /**
  * <p>
@@ -20,5 +19,5 @@ public interface ViewHistoryService extends IService<ViewHistory> {
 
     boolean removeByUserId(Long userId);
 
-    List<ViewHistoryVo> getViewHistoryByUserId(Long userId);
+    Page<ViewHistoryVo> getViewHistoryByUserId(Long userId,Long page,Long size);
 }

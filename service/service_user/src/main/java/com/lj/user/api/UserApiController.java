@@ -228,10 +228,10 @@ public class UserApiController {
      * @param request
      * @return
      */
-    @GetMapping("/history")
-    public Result getViewHistory(HttpServletRequest request){
+    @GetMapping("/history/{page}/{size}")
+    public Result getViewHistory(HttpServletRequest request,@PathVariable Long page,@PathVariable Long size){
         Long userId = JwtTokenUtil.getUserId(request.getHeader("token"));
-        List<ViewHistoryVo> viewHistoryVoPage =  viewHistoryService.getViewHistoryByUserId(userId);
+        Page<ViewHistoryVo> viewHistoryVoPage =  viewHistoryService.getViewHistoryByUserId(userId,page,size);
         return Result.ok(viewHistoryVoPage);
     }
 

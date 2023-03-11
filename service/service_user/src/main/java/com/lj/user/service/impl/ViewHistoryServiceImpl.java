@@ -1,6 +1,7 @@
 package com.lj.user.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.lj.model.user.ViewHistory;
 import com.lj.user.mapper.ViewHistoryMapper;
@@ -28,9 +29,13 @@ public class ViewHistoryServiceImpl extends ServiceImpl<ViewHistoryMapper, ViewH
      * @param userId
      * @return
      */
-    public List<ViewHistoryVo> getViewHistoryByUserId(Long userId) {
-        List<ViewHistoryVo> records =  baseMapper.selectViewHistoryByUserId(userId);
-        return records;
+    public Page<ViewHistoryVo> getViewHistoryByUserId(Long userId,Long page,Long size) {
+        Page<ViewHistoryVo> data = new Page<>(page,size);
+        Long total = baseMapper.selectViewHistoryCount(userId);
+        List<ViewHistoryVo> records =  baseMapper.selectViewHistoryByUserId(userId,(page - 1) * size,size);
+        data.setTotal(total);
+        data.setRecords(records);
+        return data;
     }
 
     /**

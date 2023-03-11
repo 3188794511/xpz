@@ -18,7 +18,7 @@ import java.util.List;
  */
 @Mapper
 public interface ViewHistoryMapper extends BaseMapper<ViewHistory> {
-    List<ViewHistoryVo> selectViewHistoryByUserId(@Param("userId") Long userId);
+    List<ViewHistoryVo> selectViewHistoryByUserId(@Param("userId") Long userId,@Param("page") Long page,@Param("size") Long size);
 
     Long selectViewHistoryCount(@Param("userId")Long userId);
 }

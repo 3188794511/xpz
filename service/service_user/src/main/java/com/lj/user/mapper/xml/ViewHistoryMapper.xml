@@ -29,6 +29,7 @@
 			     inner join tb_user u
 			                on t1.author_id = u.id
 		order by t1.view_time desc
+		limit #{page},#{size}
 	</select>
 	
 	<select id="selectViewHistoryCount" resultType="java.lang.Long" parameterType="java.lang.Long">

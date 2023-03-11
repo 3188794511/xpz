@@ -10,6 +10,7 @@ import com.lj.vo.UserQueryDto;
 import com.lj.vo.admin.UserBaseInfo;
 import com.lj.vo.admin.UserUpdateDto;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -25,7 +26,7 @@ public class AdminController {
      * @return
      */
     @GetMapping("/list/{page}/{size}")
-    public Result findUserPage(@PathVariable Long page, @PathVariable Long size, UserQueryDto userQueryDto){
+    public Result findUserPage(@PathVariable Long page, @PathVariable Long size,@Validated UserQueryDto userQueryDto){
         Page<User> pageRes = userService.pageQueryUser(page,size, userQueryDto);
         return Result.ok(pageRes);
     }
@@ -37,7 +38,7 @@ public class AdminController {
      */
     @PostMapping("/login")
     @MyLog(type = "admin",value = "管理员登录")
-    public Result login(@RequestBody LoginUserDto loginUserDto){
+    public Result login(@RequestBody @Validated LoginUserDto loginUserDto){
         return userService.adminLogin(loginUserDto);
     }
 
@@ -64,13 +65,13 @@ public class AdminController {
 
     @MyLog(type = "admin",value = "创建用户")
     @PostMapping("/save")
-    public Result saveUser(@RequestBody User user){
+    public Result saveUser(@RequestBody @Validated User user){
         return userService.createUser(user);
     }
 
     @MyLog(type = "admin",value = "修改用户信息")
     @PutMapping("/update")
-    public Result updateUser(@RequestBody UserUpdateDto user){
+    public Result updateUser(@RequestBody @Validated UserUpdateDto user){
         return userService.adminUpdateUser(user);
     }
 }

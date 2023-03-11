@@ -16,6 +16,7 @@ import com.lj.vo.user.UserSecretInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.SetOperations;
 import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -43,7 +44,7 @@ public class UserApiController {
      */
     @MyLog("用户登录")
     @PostMapping("/login")
-    public Result login(@RequestBody LoginUserDto loginUserDto){
+    public Result login(@RequestBody @Validated LoginUserDto loginUserDto){
         return userService.userLogin(loginUserDto);
     }
 
@@ -85,7 +86,7 @@ public class UserApiController {
      */
     @PostMapping("/register")
     @MyLog("注册用户")
-    public Result register(@RequestBody LoginUserDto loginUserDto){
+    public Result register(@RequestBody @Validated LoginUserDto loginUserDto){
         return userService.register(loginUserDto);
     }
 
@@ -95,7 +96,7 @@ public class UserApiController {
      */
     @PutMapping("/update/info")
     @MyLog("修改用户信息")
-    public Result updateUserInfo(@RequestBody UserInfoDto userInfoDto){
+    public Result updateUserInfo(@RequestBody @Validated UserInfoDto userInfoDto){
         return userService.updateUserInfo(userInfoDto);
     }
 

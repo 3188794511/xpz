@@ -11,6 +11,7 @@ import com.lj.util.UserInfoContext;
 import com.lj.vo.*;
 import com.lj.vo.user.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -29,7 +30,7 @@ public class BlogApiController {
      */
     @MyLog(value = "发布帖子")
     @PostMapping("/my-blog/save")
-    public Result saveBlog(@RequestBody BlogDto blogDto){
+    public Result saveBlog(@RequestBody @Validated BlogDto blogDto){
         boolean isSuccess = blogService.userSaveBlog(blogDto);
         return isSuccess ? Result.ok() : Result.fail();
     }
@@ -64,7 +65,7 @@ public class BlogApiController {
      * @return
      */
     @GetMapping("/search")
-    public Result searchByKeyword(BlogSearchDto blogSearchDto){
+    public Result searchByKeyword(@Validated BlogSearchDto blogSearchDto){
         EsPageInfo<BlogDocument> data = blogService.selectBlogDocumentByKeyword(blogSearchDto);
         return Result.ok(data);
     }
@@ -76,7 +77,7 @@ public class BlogApiController {
      */
     @MyLog(value = "更新帖子")
     @PutMapping("/my-blog/update")
-    public Result updateBlog(@RequestBody BlogDto blogDto){
+    public Result updateBlog(@RequestBody @Validated BlogDto blogDto){
         boolean isSuccess = blogService.updateBlog(blogDto);
         return isSuccess ? Result.ok() : Result.fail();
     }

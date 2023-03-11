@@ -5,6 +5,7 @@ import com.lj.base.Result;
 import com.lj.blog.service.LeaveMessageService;
 import com.lj.model.blog.LeaveMessage;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -22,7 +23,7 @@ public class LeaveMessageApiController {
      */
     @MyLog("发送了留言")
     @PostMapping("/send")
-    public Result sendLeaveMessage(@RequestBody LeaveMessage leaveMessage){
+    public Result sendLeaveMessage(@RequestBody @Validated LeaveMessage leaveMessage){
         Result res = leaveMessageService.saveLeaveMessage(leaveMessage);
         return res;
     }

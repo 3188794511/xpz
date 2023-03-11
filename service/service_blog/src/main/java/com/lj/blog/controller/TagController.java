@@ -8,6 +8,7 @@ import com.lj.base.Result;
 import com.lj.blog.service.TagService;
 import com.lj.model.blog.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -46,14 +47,14 @@ public class TagController {
 
     @MyLog(type = "admin",value = "新增标签")
     @PostMapping("/add")
-    public Result add(@RequestBody Tag tag){
+    public Result add(@RequestBody @Validated Tag tag){
         boolean isSuccess = tagService.save(tag);
         return isSuccess ? Result.ok() : Result.fail();
     }
 
     @MyLog(type = "admin",value = "修改标签")
     @PutMapping("/update")
-    public Result updateById(@RequestBody Tag tag){
+    public Result updateById(@RequestBody @Validated Tag tag){
         boolean isSuccess = tagService.updateById(tag);
         return isSuccess ? Result.ok() : Result.fail();
     }

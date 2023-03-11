@@ -6,6 +6,7 @@ import com.lj.base.Result;
 import com.lj.log.service.UpdateLogService;
 import com.lj.model.log.UpdateLog;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 /**
@@ -23,7 +24,7 @@ public class UpdateLogController {
     private UpdateLogService updateLogService;
 
     @PostMapping("/save")
-    public Result saveUpdateLog(@RequestBody UpdateLog updateLog){
+    public Result saveUpdateLog(@RequestBody @Validated UpdateLog updateLog){
         boolean isSuccess = updateLogService.save(updateLog);
         return isSuccess ? Result.ok() : Result.fail();
     }

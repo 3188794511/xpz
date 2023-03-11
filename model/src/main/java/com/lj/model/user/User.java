@@ -40,12 +40,14 @@ public class User extends BaseModel implements Serializable {
      * 用户昵称
      */
     @TableField("nick_name")
+    @NotBlank(message = "用户昵称不能为空")
     private String nickName;
 
     /**
      * 用户角色(admin,user)
      */
     @TableField("role")
+    @NotBlank(message = "用户角色不能为空")
     private String role;
 
     /**

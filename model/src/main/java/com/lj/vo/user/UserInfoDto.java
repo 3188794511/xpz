@@ -16,7 +16,6 @@ public class UserInfoDto {
     @NotBlank(message = "用户昵称不能为空")
     private String nickName;
     @JsonFormat(pattern = "yyyy-MM-dd")
-    @NotBlank(message = "用户生日不能为空")
     private Date birthday;
     @NotBlank(message = "用户自我介绍不能为空")
     private String selfDescribe;

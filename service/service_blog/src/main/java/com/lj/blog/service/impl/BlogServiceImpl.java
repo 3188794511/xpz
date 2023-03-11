@@ -261,6 +261,7 @@ public class BlogServiceImpl extends ServiceImpl<BlogMapper, Blog> implements Bl
         blog.setStatus(1);
         blog.setPublishDate(new Date());
         boolean r1 = baseMapper.updateById(blog) > 0;
+        //TODO 线程池优化
         //通知该用户,帖子审核通过
         Blog blogInfo = baseMapper.selectById(id);
         Long userId = blogInfo.getAuthorId();
@@ -352,6 +353,8 @@ public class BlogServiceImpl extends ServiceImpl<BlogMapper, Blog> implements Bl
         Blog blog = new Blog();
         blog.setId(id);
         blog.setStatus(2);
+        boolean isSuccess = baseMapper.updateById(blog) > 0;
+        //TODO 线程池优化
         //通知该用户,帖子审核未通过
         Blog blogInfo = baseMapper.selectById(id);
         Long userId = blogInfo.getAuthorId();
@@ -361,7 +364,7 @@ public class BlogServiceImpl extends ServiceImpl<BlogMapper, Blog> implements Bl
         message.setType(0);
         message.setContent("你发布的" + "《" + blogInfo.getTitle() + "》未通过审核,原因:" + reason);
         messageClientService.sendMessage(message);
-        return baseMapper.updateById(blog) > 0;
+        return isSuccess;
     }
 
     /**

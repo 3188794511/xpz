@@ -3,6 +3,7 @@ package com.lj.config;
 import com.lj.base.Result;
 import io.jsonwebtoken.ExpiredJwtException;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.validation.BindException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -15,6 +16,13 @@ public class MyExceptionHandler  {
         e.printStackTrace();
         log.error(e.getMessage());
         return Result.fail().code(50000).message("登录信息过期,请重新登录");
+    }
+
+    @ExceptionHandler({BindException.class})
+    public Result BindExceptionHandler(BindException e){
+        e.printStackTrace();
+        log.error(e.getMessage());
+        return Result.fail().message(e.getBindingResult().getFieldError().getDefaultMessage());
     }
 
     @ExceptionHandler({MethodArgumentNotValidException.class})

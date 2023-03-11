@@ -106,7 +106,7 @@ public class UserApiController {
      */
     @PutMapping("/update/pwd")
     @MyLog("修改用户密码")
-    public Result updateUserInfo(@RequestBody UserSecretInfo userSecretInfo, HttpServletRequest request){
+    public Result updateUserInfo(@RequestBody @Validated UserSecretInfo userSecretInfo, HttpServletRequest request){
         String token = request.getHeader("token");
         Long userId = JwtTokenUtil.getUserId(token);
         return userService.updateUserPwd(userSecretInfo,userId);

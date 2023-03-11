@@ -70,6 +70,7 @@ public class MyWebSocketController {
             if(Objects.nonNull(myWebSocket)){
                 sendMessage2One(chatMessageVo);
             }
+            //TODO 线程池优化
             new Thread(() -> {
                 //将消息保存到数据库
                 Message msg = new Message();

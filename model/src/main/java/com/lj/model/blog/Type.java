@@ -37,7 +37,5 @@ public class Type extends BaseModel implements Serializable {
     //子分类
     @TableField(exist = false)
     private List<Type> sonTypeList;
-
-
 }
 

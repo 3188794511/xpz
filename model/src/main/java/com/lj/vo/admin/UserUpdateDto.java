@@ -14,7 +14,6 @@ public class UserUpdateDto {
     private String nickName;
     @NotBlank(message = "用户头像不能为空")
     private String pic;
-    @NotBlank(message = "用户生日不能为空")
     private Date birthday;
     private Integer sex;
     @NotBlank(message = "用户自我介绍不能为空")

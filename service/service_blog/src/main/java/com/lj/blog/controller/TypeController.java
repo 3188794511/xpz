@@ -7,6 +7,7 @@ import com.lj.blog.service.TypeService;
 import com.lj.model.blog.Type;
 import com.lj.vo.TypeVo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -52,7 +53,7 @@ public class TypeController {
      */
     @MyLog(type = "admin",value = "新增分类")
     @PostMapping("/add")
-    public Result add(@RequestBody Type type){
+    public Result add(@RequestBody @Validated Type type){
         boolean isSuccess = typeService.save(type);
         return isSuccess ? Result.ok() : Result.fail();
     }
@@ -64,7 +65,7 @@ public class TypeController {
      */
     @MyLog(type = "admin",value = "修改分类")
     @PutMapping("/update")
-    public Result updateById(@RequestBody Type type){
+    public Result updateById(@RequestBody @Validated Type type){
         boolean isSuccess = typeService.updateById(type);
         return isSuccess ? Result.ok() : Result.fail();
     }

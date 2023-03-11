@@ -31,6 +31,7 @@ public class MyLogAspect {
     private UserClientService userClientService;
     @Autowired
     private LogClientService logClientService;
+
     @Pointcut("@annotation(com.lj.annotation.MyLog)")
     public void myPointcut(){}
 

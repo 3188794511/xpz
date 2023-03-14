@@ -5,6 +5,7 @@ import com.lj.message.service.MessageService;
 import com.lj.model.message.Message;
 import com.lj.util.JwtTokenUtil;
 import com.lj.util.UserInfoContext;
+import com.lj.vo.user.MessageCountVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -70,8 +71,8 @@ public class MessageApiController {
     @GetMapping("/unread-01")
     public Result unreadMegCount01(HttpServletRequest request){
         Long userId = JwtTokenUtil.getUserId(request.getHeader("token"));
-        Long count = messageService.unReadMessageCount01(userId);
-        return Result.ok(count);
+        MessageCountVo messageCountVo = messageService.unReadMessageCount01(userId);
+        return Result.ok(messageCountVo);
     }
 
     /**

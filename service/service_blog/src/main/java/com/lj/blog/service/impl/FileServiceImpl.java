@@ -12,6 +12,7 @@ import com.qcloud.cos.model.ObjectMetadata;
 import com.qcloud.cos.model.PutObjectRequest;
 import com.qcloud.cos.model.PutObjectResult;
 import com.qcloud.cos.region.Region;
+import lombok.extern.slf4j.Slf4j;
 import org.joda.time.DateTime;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -20,6 +21,7 @@ import java.io.InputStream;
 import java.util.UUID;
 
 @Service
+@Slf4j
 public class FileServiceImpl implements FileService {
     /**
      * 文件上传
@@ -61,6 +63,7 @@ public class FileServiceImpl implements FileService {
             PutObjectResult putObjectResult = cosClient.putObject(putObjectRequest);
             System.out.println(JSON.toJSONString(putObjectResult));
             String url = "https://"+bucketName+"."+"cos"+"."+endpoint+".myqcloud.com"+"/"+key;
+            log.info("上传的图片链接: {}", url);
             return url;
         } catch (Exception clientException) {
             clientException.printStackTrace();

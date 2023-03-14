@@ -1,5 +1,6 @@
 package com.lj.message.task;
 
+import com.alibaba.fastjson.JSON;
 import com.lj.message.service.MessageService;
 import com.lj.model.message.ChatMessageVo;
 import com.lj.util.SendMessageUtil;
@@ -28,14 +29,14 @@ public class MyScheduleTask {
             unreadMsg1.setReceiveUserId(userId);
             unreadMsg1.setType(2);
             unreadMsg1.setCreateTime(new Date());
-            unreadMsg1.setContent(messageService.unReadMessageCount01(userId).toString());
+            unreadMsg1.setContent(JSON.toJSONString(messageService.unReadMessageCount01(userId)));
             SendMessageUtil.sendMessage2One(unreadMsg1);
             //消息类型为3的未读数量
             ChatMessageVo unreadMsg2 = new ChatMessageVo();
             unreadMsg2.setReceiveUserId(userId);
             unreadMsg2.setType(4);
             unreadMsg2.setCreateTime(new Date());
-            unreadMsg2.setContent(messageService.unReadMessageCount3(userId).toString());
+            unreadMsg2.setContent(JSON.toJSONString(messageService.unReadMessageCount3(userId)));
             SendMessageUtil.sendMessage2One(unreadMsg2);
         });
     }

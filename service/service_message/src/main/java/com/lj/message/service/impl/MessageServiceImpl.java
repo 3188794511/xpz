@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.lj.message.mapper.MessageMapper;
 import com.lj.message.service.MessageService;
 import com.lj.model.message.Message;
+import com.lj.vo.user.MessageCountVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.SetOperations;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -80,15 +81,22 @@ public class MessageServiceImpl extends ServiceImpl<MessageMapper, Message> impl
      * @param userId
      * @return
      */
-    public Long unReadMessageCount01(Long userId) {
+    public MessageCountVo unReadMessageCount01(Long userId) {
         LambdaQueryWrapper<Message> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(Message::getReceiveUserId,userId)
                 .eq(Message::getStatus,0)
-                .and(c -> {
-                    c.eq(Message::getType,0)
-                            .or().eq(Message::getType,1);
-                });
-       return Long.valueOf(baseMapper.selectCount(wrapper));
+                .eq(Message::getType,0);
+        LambdaQueryWrapper<Message> wrapper1 = new LambdaQueryWrapper<>();
+        wrapper1.eq(Message::getReceiveUserId,userId)
+                .eq(Message::getStatus,0)
+                .eq(Message::getType,1);
+        Integer systemMsgCount = baseMapper.selectCount(wrapper);
+        Integer chatMsgCount = baseMapper.selectCount(wrapper1);
+        MessageCountVo messageCountVo = new MessageCountVo();
+        messageCountVo.setSystemMsgCount(systemMsgCount);
+        messageCountVo.setChatMsgCount(chatMsgCount);
+        messageCountVo.setTotalMsgCount(systemMsgCount + chatMsgCount);
+        return messageCountVo;
     }
 
 

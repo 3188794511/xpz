@@ -122,6 +122,9 @@ public class UserApiController {
     public Result followUser(HttpServletRequest request,@PathVariable Long followUserId){
         String token = request.getHeader("token");
         Long userId = JwtTokenUtil.getUserId(token);
+        if(userId.equals(followUserId)){
+            return Result.fail().message("不能对自己进行该操作");
+        }
         return userService.followUser(userId,followUserId);
     }
 
@@ -299,6 +302,9 @@ public class UserApiController {
     @DeleteMapping("/delete/chat-user/{id}")
     public Result deleteChatUser(@PathVariable Long id,HttpServletRequest request){
         Long userId = JwtTokenUtil.getUserId(request.getHeader("token"));
+        if(userId.equals(id)){
+            return Result.fail().message("不能对自己进行该操作");
+        }
         boolean isSuccess = userService.deleteChatUser(userId,id);
         return isSuccess ? Result.ok() : Result.fail();
     }
@@ -312,6 +318,9 @@ public class UserApiController {
     @PostMapping("/add/chat-user/{id}")
     public Result addChatUser(@PathVariable Long id,HttpServletRequest request){
         Long userId = JwtTokenUtil.getUserId(request.getHeader("token"));
+        if(userId.equals(id)){
+            return Result.fail().message("不能对自己进行该操作");
+        }
         boolean isSuccess = userService.addChatUser(userId,id);
         return isSuccess ? Result.ok() : Result.fail();
     }

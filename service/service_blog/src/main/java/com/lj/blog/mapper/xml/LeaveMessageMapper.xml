@@ -16,12 +16,13 @@
 		<if test="leaveMessageQueryDto.sendTime != null">
 			and Date (l.create_time) = Date(#{leaveMessageQueryDto.sendTime})
 		</if>
+			and l.is_deleted = 0
 		</where>
 		order by l.create_time desc
 		limit #{page},#{size}
 	</select>
 	
-	<select id="selectCountQuery" resultType="java.lang.Long" parameterType="com.lj.vo.admin.LeaveMessageQueryDto">
+	<select id="selectCountQuery" resultType="java.lang.Long" parameterType="com.lj.dto.LeaveMessageQueryDto">
 		select
 		count(distinct l.id)
 		from leave_message l
@@ -35,6 +36,47 @@
 			<if test="leaveMessageQueryDto.sendTime != null">
 				and Date (l.create_time) = Date(#{leaveMessageQueryDto.sendTime})
 			</if>
+			and l.is_deleted = 0
+		</where>
+	</select>
+	
+	<select id="selectByParams" resultType="com.lj.model.blog.LeaveMessage">
+		select
+		l.*,u.nick_name as username,u.pic as pic
+		from leave_message l
+		inner join xpz_user.tb_user u
+		on l.user_id = u.id
+		<where>
+			<if test="userId != null">
+				l.user_id = #{userId}
+			</if>
+			<if test="leaveMessageQueryDto.keyword != null">
+				and l.content like CONCAT('%',#{leaveMessageQueryDto.keyword},'%')
+			</if>
+			<if test="leaveMessageQueryDto.sendTime != null">
+				and Date (l.create_time) = Date(#{leaveMessageQueryDto.sendTime})
+			</if>
+			and l.is_deleted = 0
+		</where>
+		order by l.create_time desc
+		limit #{page},#{size}
+	</select>
+	
+	<select id="selectCountByParams" resultType="java.lang.Long">
+		select
+		count(*)
+ 		from leave_message l
+		<where>
+			<if test="userId != null">
+				l.user_id = #{userId}
+			</if>
+			<if test="leaveMessageQueryDto.keyword != null">
+				and l.content like CONCAT('%',#{leaveMessageQueryDto.keyword},'%')
+			</if>
+			<if test="leaveMessageQueryDto.sendTime != null">
+				and Date (l.create_time) = Date(#{leaveMessageQueryDto.sendTime})
+			</if>
+			and l.is_deleted = 0
 		</where>
 	</select>
 </mapper>

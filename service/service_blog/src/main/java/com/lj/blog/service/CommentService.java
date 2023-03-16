@@ -4,7 +4,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.lj.base.Result;
 import com.lj.model.blog.Comment;
-import com.lj.vo.CommentQueryDto;
+import com.lj.dto.CommentQueryDto;
 import com.lj.vo.CommentViewVo;
 import com.lj.vo.CommentVo;
 
@@ -31,4 +31,6 @@ public interface CommentService extends IService<Comment> {
     Result likeComment(Long commentId);
 
     Boolean isLikedComment(Long commentId,Long userId);
+
+    Result removeCommentByIds(List<Long> ids);
 }

@@ -1,13 +1,14 @@
 package com.lj.blog.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.lj.dto.BlogQueryDto1;
 import com.lj.model.blog.Blog;
 import com.lj.blog.es.BlogDocument;
 import com.lj.vo.*;
-import com.lj.vo.admin.EchartsVo;
-import com.lj.vo.user.BlogQueryDto2;
-import com.lj.vo.user.BlogQueryDto3;
-import com.lj.vo.user.BlogViewVo;
+import com.lj.vo.EchartsVo;
+import com.lj.dto.BlogQueryDto2;
+import com.lj.dto.BlogQueryDto3;
+import com.lj.vo.BlogViewVo;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 

@@ -2,7 +2,7 @@ package com.lj.blog.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.lj.model.blog.Comment;
-import com.lj.vo.CommentQueryDto;
+import com.lj.dto.CommentQueryDto;
 import com.lj.vo.CommentVo;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;

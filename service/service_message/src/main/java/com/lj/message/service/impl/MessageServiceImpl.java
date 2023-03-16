@@ -5,7 +5,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.lj.message.mapper.MessageMapper;
 import com.lj.message.service.MessageService;
 import com.lj.model.message.Message;
-import com.lj.vo.user.MessageCountVo;
+import com.lj.vo.MessageCountVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.SetOperations;
 import org.springframework.data.redis.core.StringRedisTemplate;

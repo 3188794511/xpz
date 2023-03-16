@@ -5,7 +5,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.lj.annotation.MyLog;
 import com.lj.base.Result;
 import com.lj.blog.service.CommentService;
-import com.lj.vo.CommentQueryDto;
+import com.lj.dto.CommentQueryDto;
 import com.lj.vo.CommentVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;

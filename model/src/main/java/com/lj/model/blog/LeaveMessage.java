@@ -1,10 +1,8 @@
 package com.lj.model.blog;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.annotation.*;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.lj.base.BaseModel;
 import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
@@ -22,15 +20,9 @@ import java.util.Date;
  */
 @Data
 @TableName("leave_message")
-public class LeaveMessage implements Serializable {
+public class LeaveMessage extends BaseModel implements Serializable{
 
     private static final long serialVersionUID=1L;
-
-    /**
-     * 主键id
-     */
-    @TableId(value = "id", type = IdType.AUTO)
-    private Long id;
 
     /**
      * 留言用户id
@@ -58,12 +50,4 @@ public class LeaveMessage implements Serializable {
     @TableField("content")
     @NotBlank(message = "留言内容不能为空")
     private String content;
-
-    /**
-     * 留言时间
-     */
-    @TableField("create_time")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    private Date createTime;
-
 }

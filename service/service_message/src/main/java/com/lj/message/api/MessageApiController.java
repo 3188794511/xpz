@@ -5,7 +5,7 @@ import com.lj.message.service.MessageService;
 import com.lj.model.message.Message;
 import com.lj.util.JwtTokenUtil;
 import com.lj.util.UserInfoContext;
-import com.lj.vo.user.MessageCountVo;
+import com.lj.vo.MessageCountVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 

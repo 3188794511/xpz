@@ -1,4 +1,4 @@
-package com.lj.vo.user;
+package com.lj.vo;
 
 import lombok.Data;
 

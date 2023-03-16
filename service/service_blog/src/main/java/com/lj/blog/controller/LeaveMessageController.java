@@ -5,7 +5,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.lj.base.Result;
 import com.lj.blog.service.LeaveMessageService;
 import com.lj.model.blog.LeaveMessage;
-import com.lj.vo.admin.LeaveMessageQueryDto;
+import com.lj.dto.LeaveMessageQueryDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;

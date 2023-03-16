@@ -2,7 +2,7 @@ package com.lj.message.service;
 
 import com.lj.model.message.Message;
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.lj.vo.user.MessageCountVo;
+import com.lj.vo.MessageCountVo;
 
 import java.util.List;
 

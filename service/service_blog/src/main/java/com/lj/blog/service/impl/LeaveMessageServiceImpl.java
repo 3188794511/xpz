@@ -10,7 +10,7 @@ import com.lj.client.UserClientService;
 import com.lj.model.blog.LeaveMessage;
 import com.lj.model.user.User;
 import com.lj.util.UserInfoContext;
-import com.lj.vo.admin.LeaveMessageQueryDto;
+import com.lj.dto.LeaveMessageQueryDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -53,7 +53,7 @@ public class LeaveMessageServiceImpl extends ServiceImpl<LeaveMessageMapper, Lea
     }
 
     /**
-     * 留言   添加用户信息
+     * 留言  添加用户信息
      * @param leaveMessage
      */
     private void setUserInfo(LeaveMessage leaveMessage) {
@@ -75,6 +75,25 @@ public class LeaveMessageServiceImpl extends ServiceImpl<LeaveMessageMapper, Lea
         page = (page - 1) * size;
         List<LeaveMessage> records =  baseMapper.selectPageQuery(page,size,leaveMessageQueryDto);
         Long total = baseMapper.selectCountQuery(leaveMessageQueryDto);
+        res.setRecords(records);
+        res.setTotal(total);
+        return res;
+    }
+
+    /**
+     * 条件查询留言
+     * @param userId
+     * @param page
+     * @param size
+     * @param leaveMessageQueryDto
+     * @return
+     */
+    public Page<LeaveMessage> searchLeaveMessageByParams(Long userId, Long page, Long size, LeaveMessageQueryDto leaveMessageQueryDto) {
+        Page<LeaveMessage> res = new Page<>(page,size);
+        //计算起始偏移量
+        page = (page - 1) * size;
+        List<LeaveMessage> records =  baseMapper.selectByParams(userId,page,size,leaveMessageQueryDto);
+        Long total = baseMapper.selectCountByParams(userId,leaveMessageQueryDto);
         res.setRecords(records);
         res.setTotal(total);
         return res;

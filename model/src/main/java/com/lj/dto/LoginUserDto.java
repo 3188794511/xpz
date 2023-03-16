@@ -1,4 +1,4 @@
-package com.lj.vo;
+package com.lj.dto;
 
 import lombok.Data;
 

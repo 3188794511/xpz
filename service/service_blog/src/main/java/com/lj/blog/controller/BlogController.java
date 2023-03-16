@@ -5,10 +5,10 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.lj.annotation.MyLog;
 import com.lj.base.Result;
 import com.lj.blog.service.BlogService;
-import com.lj.vo.user.BlogDto;
-import com.lj.vo.BlogQueryDto1;
+import com.lj.dto.BlogDto;
+import com.lj.dto.BlogQueryDto1;
 import com.lj.vo.BlogVo;
-import com.lj.vo.admin.ReasonVo;
+import com.lj.vo.ReasonVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 

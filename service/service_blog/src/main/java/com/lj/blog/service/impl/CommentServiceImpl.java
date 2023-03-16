@@ -11,7 +11,7 @@ import com.lj.client.UserClientService;
 import com.lj.model.blog.Comment;
 import com.lj.model.user.User;
 import com.lj.util.UserInfoContext;
-import com.lj.vo.CommentQueryDto;
+import com.lj.dto.CommentQueryDto;
 import com.lj.vo.CommentUser;
 import com.lj.vo.CommentViewVo;
 import com.lj.vo.CommentVo;
@@ -22,6 +22,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -95,7 +96,6 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment> impl
             }).collect(Collectors.toList());
         return commentViewVos;
     }
-
 
     /**
      * 根据comment封装commentViewVo
@@ -176,11 +176,47 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment> impl
             //不含子评论
             return baseMapper.deleteById(id) > 0;
         }
-        //含有子评论,递归找出所有子评论
-        List<Long> ids = new ArrayList<>();
-        searchChildrenIds(comment,ids);
-        //删除所有相关评论
-        return baseMapper.deleteBatchIds(ids) > 0;
+        //含有子评论,将所有子评论的parent_id修改为-1
+        childrenComments.forEach(c -> {
+            Comment updateComment = new Comment();
+            updateComment.setId(c.getId());
+            updateComment.setParentId(-1L);
+            updateComment.setUpdateTime(new Date());
+            baseMapper.updateById(updateComment);
+        });
+        //删除父评论
+        return baseMapper.deleteById(id) > 0;
+    }
+
+    /**
+     * 删除评论
+     * @param ids
+     * @return
+     */
+    public Result removeCommentByIds(List<Long> ids) {
+        if(ids.isEmpty()){
+            return Result.fail().message("评论id不能为空");
+        }
+        //获取所有删除评论的子评论
+        List<Comment> childrenComments = new ArrayList<>();
+        ids.forEach(i -> {
+            List<Comment> childrenComment = getByParentId(i);
+            if(!childrenComment.isEmpty()){
+                childrenComments.addAll(childrenComment);
+            }
+        });
+        //将所有子评论的parent_id修改为-1
+        if(!childrenComments.isEmpty()){
+            childrenComments.forEach(i -> {
+                Comment updateComment = new Comment();
+                updateComment.setId(i.getId());
+                updateComment.setParentId(-1L);
+                updateComment.setUpdateTime(new Date());
+                baseMapper.updateById(updateComment);
+            });
+        }
+        return baseMapper.deleteBatchIds(ids) > 0 ? Result.ok().message("删除评论成功")
+                : Result.fail().message("删除评论失败");
     }
 
     /**

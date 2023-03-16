@@ -1,4 +1,4 @@
-package com.lj.vo;
+package com.lj.dto;
 
 import lombok.Data;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -6,10 +6,8 @@ import org.springframework.format.annotation.DateTimeFormat;
 import java.util.Date;
 
 @Data
-public class CommentQueryDto {
-    //博客标题或评论用户姓名
+public class UserQueryDto {
     private String keyword;
-    //评论发表时间
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
     private Date createTime;
 }

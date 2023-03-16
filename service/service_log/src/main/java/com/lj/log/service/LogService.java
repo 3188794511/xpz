@@ -3,7 +3,7 @@ package com.lj.log.service;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.lj.model.log.MyLog;
-import com.lj.vo.admin.LogQueryDto;
+import com.lj.dto.LogQueryDto;
 
 /**
  * <p>

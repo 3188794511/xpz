@@ -15,6 +15,7 @@
 		<result column="user_name" property="userName"></result>
 		<result column="replay_user" property="parentCommentUser"></result>
 	</resultMap>
+	
 	<select id="selectCommentPage" resultMap="baseComment">
 		select
 		c.*,b.title as blog_title,u.nick_name as user_name,u1.nick_name as replay_user
@@ -23,9 +24,11 @@
 		inner join xpz_user.tb_user u on c.user_id = u.id
 		left join xpz_user.tb_user u1 on c.replay_user_id = u1.id
 		<where>
-			<if test="commentQueryDto.keyword != null">
-			    (b.title like CONCAT('%',#{commentQueryDto.keyword},'%')
-			    or u.nick_name like CONCAT('%',#{commentQueryDto.keyword},'%'))
+			<if test="commentQueryDto.blogTitle != null">
+			    b.title like CONCAT('%',#{commentQueryDto.blogTitle},'%')
+			</if>
+			<if test="commentQueryDto.commentUsername != null">
+				and u.nick_name like CONCAT('%',#{commentQueryDto.commentUsername},'%')
 			</if>
 			 <if test="commentQueryDto.createTime != null">
 				 and DATE(c.create_time) = DATE(#{commentQueryDto.createTime})
@@ -36,16 +39,18 @@
 			limit #{page}, #{size}
 	</select>
 	
-	<select id="selectCountParam" resultType="java.lang.Long" parameterType="com.lj.vo.CommentQueryDto">
+	<select id="selectCountParam" resultType="java.lang.Long" parameterType="com.lj.dto.CommentQueryDto">
 		select
 			count(distinct c.id) as total
 		from comment c
 			     inner join blog b on c.blog_id = b.id
 			     inner join xpz_user.tb_user u on c.user_id = u.id
 		<where>
-			<if test="commentQueryDto.keyword != null">
-			    (b.title like CONCAT('%',#{commentQueryDto.keyword},'%')
-				or u.nick_name like CONCAT('%',#{commentQueryDto.keyword},'%'))
+			<if test="commentQueryDto.blogTitle != null">
+				b.title like CONCAT('%',#{commentQueryDto.blogTitle},'%')
+			</if>
+			<if test="commentQueryDto.commentUsername != null">
+				and u.nick_name like CONCAT('%',#{commentQueryDto.commentUsername},'%')
 			</if>
 			<if test="commentQueryDto.createTime != null">
 				and DATE(c.create_time) = DATE(#{commentQueryDto.createTime})

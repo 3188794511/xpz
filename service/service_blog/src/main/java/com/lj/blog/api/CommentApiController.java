@@ -1,14 +1,18 @@
 package com.lj.blog.api;
 
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.lj.annotation.MyLog;
 import com.lj.base.Result;
 import com.lj.blog.service.CommentService;
+import com.lj.dto.CommentQueryDto;
 import com.lj.util.JwtTokenUtil;
 import com.lj.vo.CommentViewVo;
+import com.lj.vo.CommentVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -26,6 +30,30 @@ public class CommentApiController {
     @PostMapping("/save")
     public Result saveComment(@RequestBody CommentViewVo commentViewVo){
         return commentService.saveComment(commentViewVo);
+    }
+
+    /**
+     * 删除评论
+     * @param ids
+     * @return
+     */
+    @MyLog(value = "删除评论")
+    @DeleteMapping("/remove")
+    public Result removeComment(@RequestParam("ids") List<Long> ids) {
+        return commentService.removeCommentByIds(ids);
+    }
+
+    /**
+     * 查询评论
+     * @param page
+     * @param size
+     * @param commentQueryDto
+     * @return
+     */
+    @GetMapping("search/{page}/{size}")
+    public Result searchCommentByParams(@PathVariable Long page,@PathVariable Long size,CommentQueryDto commentQueryDto){
+        Page<CommentVo> commentVoList = commentService.pageParamQuery(page,size,commentQueryDto);
+        return Result.ok(commentVoList);
     }
 
     /**

@@ -8,13 +8,15 @@ import com.lj.blog.mapper.BlogMapper;
 import com.lj.blog.mapper.CommentMapper;
 import com.lj.blog.mapper.es.BlogDocumentMapper;
 import com.lj.blog.service.*;
+import com.lj.dto.BlogQueryDto1;
+import com.lj.dto.CommentQueryDto;
 import com.lj.model.blog.Blog;
 import com.lj.util.SendMessageUtil;
 import com.lj.vo.*;
-import com.lj.vo.admin.LeaveMessageQueryDto;
-import com.lj.vo.user.BlogQueryDto2;
-import com.lj.vo.user.BlogSearchDto;
-import com.lj.vo.user.BlogViewVo;
+import com.lj.dto.LeaveMessageQueryDto;
+import com.lj.dto.BlogQueryDto2;
+import com.lj.dto.BlogSearchDto;
+import com.lj.vo.BlogViewVo;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,7 +57,6 @@ public class BlogApplicationTest {
     @Test
     void test1() throws ParseException {
         CommentQueryDto commentQueryDto = new CommentQueryDto();
-        commentQueryDto.setKeyword("测");
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         Date date = dateFormat.parse("2022-11-11 17:27:53");
         commentQueryDto.setCreateTime(date);

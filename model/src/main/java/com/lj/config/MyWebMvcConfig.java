@@ -30,20 +30,30 @@ public class MyWebMvcConfig implements WebMvcConfigurer {
          * 发表 点赞评论,  发送留言,  发布 更新 删除 点赞博客, 查看自己发布的博客, 消息相关
          * ---需要登录
          */
-        registry.addInterceptor(new UserInterceptor()).addPathPatterns("/xpz/api/blog/comment/save",
-                        "/xpz/api/blog/comment/likes/**"
+        registry.addInterceptor(new UserInterceptor()).addPathPatterns(
+                        //评论接口
+                        "/xpz/api/blog/comment/save"
+                        ,"/xpz/api/blog/comment/remove"
+                        ,"/xpz/api/blog/comment/search/**"
+                        ,"/xpz/api/blog/comment/likes/**"
+                        //用户接口
                         ,"/xpz/api/user/update/**"
+                        ,"/xpz/api/user/history/**"
+                        ,"/xpz/api/user/*/chat-user/**"
                         ,"/xpz/api/user/info"
                         ,"/xpz/api/user/follow/**"
+                        //文件上传接口
                         ,"/xpz/api/blog/file/user-upload"
+                        //留言接口
                         ,"/xpz/api/blog/leave-message/send"
+                        ,"/xpz/api/blog/leave-message/remove"
+                        ,"/xpz/api/blog/leave-message/search/**"
+                        //博客接口
                         ,"/xpz/api/blog/blog/likes/**"
                         ,"/xpz/api/blog/blog/my-blog/**"
+                        ,"/xpz/api/blog/blog/follow-user-blog/**"
+                        //消息接口
                         ,"/xpz/api/message/**"
-                        ,"/xpz/api/user/history/**")
-                .excludePathPatterns("/xpz/api/user" +
-                                "/history/save"
-                        ,"/xpz/api/user/follow-info/**"
-                        ,"/xpz/api/user/follow-me-info/**");
+                       );
     }
 }

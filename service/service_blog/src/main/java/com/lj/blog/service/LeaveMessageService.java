@@ -4,7 +4,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.lj.base.Result;
 import com.lj.model.blog.LeaveMessage;
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.lj.vo.admin.LeaveMessageQueryDto;
+import com.lj.dto.LeaveMessageQueryDto;
 
 import java.util.List;
 
@@ -23,4 +23,6 @@ public interface LeaveMessageService extends IService<LeaveMessage> {
     Page<LeaveMessage> PageQueryLeaveMessage(Long page, Long size, LeaveMessageQueryDto leaveMessageQueryDto);
 
     List<LeaveMessage> listAll();
+
+    Page<LeaveMessage> searchLeaveMessageByParams(Long userId, Long page, Long size, LeaveMessageQueryDto leaveMessageQueryDto);
 }

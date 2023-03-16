@@ -28,7 +28,7 @@ public class BaseModel implements Serializable {
     private Date updateTime;
 
     @TableField("is_deleted")
-    @TableLogic
+    @TableLogic(value = "0",delval = "1")
     private Integer isDeleted;
 
     @TableField(exist = false)

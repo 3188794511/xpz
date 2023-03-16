@@ -4,7 +4,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.lj.base.Result;
 import com.lj.log.service.LogService;
 import com.lj.model.log.MyLog;
-import com.lj.vo.admin.LogQueryDto;
+import com.lj.dto.LogQueryDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 

@@ -1,4 +1,4 @@
-package com.lj.vo.user;
+package com.lj.dto;
 
 import lombok.Data;
 import org.springframework.format.annotation.DateTimeFormat;

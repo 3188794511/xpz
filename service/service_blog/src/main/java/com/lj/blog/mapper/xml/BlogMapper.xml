@@ -21,7 +21,7 @@
 		<result column="tag_names" property="tagNamesAsStr"></result>
 	</resultMap>
 	
-	<resultMap id="blogViewVo" type="com.lj.vo.user.BlogViewVo">
+	<resultMap id="blogViewVo" type="com.lj.vo.BlogViewVo">
 		<id column="id" property="id"></id>
 		<result column="title" property="title"></result>
 		<result column="author_name" property="authorName"></result>
@@ -97,7 +97,7 @@
 		</where>
 	</select>
 	
-	<select id="reportsBlogTags" resultType="com.lj.vo.admin.EchartsVo">
+	<select id="reportsBlogTags" resultType="com.lj.vo.EchartsVo">
 		select
 			t.tag_name name,count(t.id) value
 		from tag t
@@ -107,7 +107,7 @@
 		order by value desc;
 	</select>
 	
-	<select id="reportsBlogTypes" resultType="com.lj.vo.admin.EchartsVo">
+	<select id="reportsBlogTypes" resultType="com.lj.vo.EchartsVo">
 		select
 			t.type_name name,if(b.type_id is null,0,count(t.id)) value
 		from type t
@@ -133,7 +133,7 @@
 		limit #{page},#{size}
 	</select>
 	
-	<select id="selectCountQueryPublish" resultType="java.lang.Long" parameterType="com.lj.vo.user.BlogQueryDto2">
+	<select id="selectCountQueryPublish" resultType="java.lang.Long" parameterType="com.lj.dto.BlogQueryDto2">
 		select
 		count(distinct b.id) as total
 		from blog b

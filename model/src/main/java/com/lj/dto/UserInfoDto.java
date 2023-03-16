@@ -1,4 +1,4 @@
-package com.lj.vo.user;
+package com.lj.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;

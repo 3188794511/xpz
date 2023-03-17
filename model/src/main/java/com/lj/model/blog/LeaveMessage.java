@@ -35,7 +35,6 @@ public class LeaveMessage extends BaseModel implements Serializable{
      * 留言用户昵称
      */
     @TableField(exist = false)
-    @NotBlank(message = "留言用户昵称不能为空")
     private String username;
 
     /**

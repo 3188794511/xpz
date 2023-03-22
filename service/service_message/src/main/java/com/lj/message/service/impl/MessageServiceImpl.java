@@ -1,11 +1,14 @@
 package com.lj.message.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.lj.dto.MessageQueryDto;
 import com.lj.message.mapper.MessageMapper;
 import com.lj.message.service.MessageService;
 import com.lj.model.message.Message;
 import com.lj.vo.MessageCountVo;
+import com.lj.vo.MessageVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.SetOperations;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -171,5 +174,22 @@ public class MessageServiceImpl extends ServiceImpl<MessageMapper, Message> impl
             isSuccess = ops.add(key,sendUserId.toString()) > 0;
         }
         return isSuccess;
+    }
+
+    /**
+     * 条件查询用户所有消息
+     * @param userId
+     * @param messageQueryDto
+     * @return
+     */
+    public Page<MessageVo> pageQueryAllMessage(Long userId, MessageQueryDto messageQueryDto) {
+        Long offset = (messageQueryDto.getPage() - 1) * messageQueryDto.getSize();
+        Page<MessageVo> res = new Page<>(messageQueryDto.getPage(),messageQueryDto.getSize());
+        messageQueryDto.setPage(offset);
+        Long total = baseMapper.selectAllMessageCount(userId,messageQueryDto);
+        List<MessageVo> records = baseMapper.selectAllMessage(userId,messageQueryDto);
+        res.setTotal(total);
+        res.setRecords(records);
+        return res;
     }
 }

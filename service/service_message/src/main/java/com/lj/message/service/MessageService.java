@@ -1,8 +1,11 @@
 package com.lj.message.service;
 
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.lj.dto.MessageQueryDto;
 import com.lj.model.message.Message;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.lj.vo.MessageCountVo;
+import com.lj.vo.MessageVo;
 
 import java.util.List;
 
@@ -23,4 +26,5 @@ public interface MessageService extends IService<Message> {
     Long unReadMessageCount3(Long userId);
     List<Message> chatHistory(Long userId, Long chatUserId);
     boolean addChatUser(Long sendUserId, Long receiveUserId);
+    Page<MessageVo> pageQueryAllMessage(Long userId, MessageQueryDto messageQueryDto);
 }

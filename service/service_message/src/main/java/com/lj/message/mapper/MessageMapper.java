@@ -1,8 +1,13 @@
 package com.lj.message.mapper;
 
+import com.lj.dto.MessageQueryDto;
 import com.lj.model.message.Message;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.lj.vo.MessageVo;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 /**
  * <p>
@@ -15,4 +20,7 @@ import org.apache.ibatis.annotations.Mapper;
 @Mapper
 public interface MessageMapper extends BaseMapper<Message> {
 
+    Long selectAllMessageCount(@Param("userId") Long userId,@Param("messageQueryDto") MessageQueryDto messageQueryDto);
+
+    List<MessageVo> selectAllMessage(@Param("userId") Long userId,@Param("messageQueryDto") MessageQueryDto messageQueryDto);
 }

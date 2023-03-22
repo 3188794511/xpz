@@ -1,12 +1,16 @@
 package com.lj.message.api;
 
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.lj.base.Result;
+import com.lj.dto.MessageQueryDto;
 import com.lj.message.service.MessageService;
 import com.lj.model.message.Message;
 import com.lj.util.JwtTokenUtil;
 import com.lj.util.UserInfoContext;
 import com.lj.vo.MessageCountVo;
+import com.lj.vo.MessageVo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -109,14 +113,22 @@ public class MessageApiController {
     }
 
     /**
-     * 删除一条消息
-     * @param id
+     * 删除消息
+     * @param ids
      * @return
      */
-    @DeleteMapping("/remove/{id}")
-    public Result deleteMessage(@PathVariable Long id){
-        boolean isSuccess = messageService.removeById(id);
+    @DeleteMapping("/remove")
+    public Result deleteMessage(@RequestParam("ids") List<Long> ids){
+        boolean isSuccess = messageService.removeByIds(ids);
         return isSuccess ? Result.ok().message("消息删除成功") : Result.fail().message("消息删除失败");
+    }
+
+    @GetMapping("/all")
+    public Result allMessage(HttpServletRequest request,@Validated MessageQueryDto messageQueryDto){
+        String token = request.getHeader("token");
+        Long userId = JwtTokenUtil.getUserId(token);
+        Page<MessageVo> data = messageService.pageQueryAllMessage(userId,messageQueryDto);
+        return Result.ok(data);
     }
 
 

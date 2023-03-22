@@ -1,5 +1,46 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.lj.message.mapper.MessageMapper">
-
+	
+	<select id="selectAllMessageCount" resultType="java.lang.Long">
+		select
+		    count(*)
+		from message m
+		<where>
+			m.receive_user_id = #{userId}
+			<if test="messageQueryDto.type != null">
+				and m.type = #{messageQueryDto.type}
+			</if>
+			<if test="messageQueryDto.status != null">
+				and m.status = #{messageQueryDto.status}
+			</if>
+			<if test="messageQueryDto.createTime != null">
+				and DATE(m.create_time) = #{messageQueryDto.createTime}
+			</if>
+			and m.is_deleted = 0
+		</where>
+	</select>
+	
+	<select id="selectAllMessage" resultType="com.lj.vo.MessageVo">
+		select
+			m.*,u.nick_name as sendUserName,u.pic as sendUserPic
+		from message m
+			     inner join xpz_user.tb_user u
+			                on m.send_user_id = u.id
+		<where>
+			m.receive_user_id = #{userId}
+			<if test="messageQueryDto.type != null">
+				and m.type = #{messageQueryDto.type}
+			</if>
+			<if test="messageQueryDto.status != null">
+				and m.status = #{messageQueryDto.status}
+			</if>
+			<if test="messageQueryDto.createTime != null">
+				and DATE(m.create_time) = #{messageQueryDto.createTime}
+			</if>
+			and m.is_deleted = 0
+		</where>
+		order by m.create_time DESC
+		limit #{messageQueryDto.page},#{messageQueryDto.size}
+	</select>
 </mapper>

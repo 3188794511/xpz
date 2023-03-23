@@ -93,4 +93,14 @@ public class CommentApiController {
         return commentService.likeComment(commentId);
     }
 
+    /**
+     * 用户的评论数量
+     * @param userId
+     * @return
+     */
+    @RequestMapping("/data/count")
+    public Result<Long> userCommentCount(Long userId){
+        Long data = commentService.selectUserCommentCount(userId);
+        return Result.ok(data);
+    }
 }

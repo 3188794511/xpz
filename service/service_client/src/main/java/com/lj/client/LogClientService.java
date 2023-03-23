@@ -10,5 +10,4 @@ import org.springframework.web.bind.annotation.RequestBody;
 public interface LogClientService {
     @PostMapping("/xpz/log/my-log/save")
     Result saveLog(@RequestBody MyLog myLog);
-
 }

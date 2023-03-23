@@ -318,4 +318,22 @@
 			</foreach>
 		</where>
 	</select>
+	
+	<select id="selectViewsSum" resultType="java.lang.Long">
+		select
+		SUM(views)
+		from blog b
+		<where>
+			b.author_id = #{userId}
+		</where>
+	</select>
+	
+	<select id="selectLikesSum" resultType="java.lang.Long">
+		select
+		SUM(likes)
+		from blog b
+		<where>
+			b.author_id = #{userId}
+		</where>
+	</select>
 </mapper>

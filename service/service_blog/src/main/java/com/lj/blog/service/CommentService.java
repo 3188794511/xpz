@@ -33,4 +33,6 @@ public interface CommentService extends IService<Comment> {
     Boolean isLikedComment(Long commentId,Long userId);
 
     Result removeCommentByIds(List<Long> ids);
+
+    Long selectUserCommentCount(Long userId);
 }

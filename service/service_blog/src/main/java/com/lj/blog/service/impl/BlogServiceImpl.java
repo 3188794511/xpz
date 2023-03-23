@@ -37,6 +37,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import java.util.*;
+import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
 import static com.lj.constant.RedisConstant.LIKE_BLOG;
@@ -109,20 +110,26 @@ public class BlogServiceImpl extends ServiceImpl<BlogMapper, Blog> implements Bl
         blog.setAuthorId(userId);
         boolean row1 = baseMapper.insert(blog) > 0;
         //保存帖子详情信息
-        BlogDetail blogDetail = new BlogDetail();
-        BeanUtils.copyProperties(blogDto,blogDetail);
-        blogDetail.setBlogId(blog.getId());
-        boolean row2 = blogDetailService.save(blogDetail);
+        Boolean row2 = ThreadPoolUtil.submit(() -> {
+            BlogDetail blogDetail = new BlogDetail();
+            BeanUtils.copyProperties(blogDto, blogDetail);
+            blogDetail.setBlogId(blog.getId());
+            boolean res = blogDetailService.save(blogDetail);
+            return res;
+        });
         //保存帖子标签信息
-        List<String> tagNames = blogDto.getTagNames();
-        List<Tag> tags = tagService.queryIsExists(tagNames);
-        List<BlogTag> blogTagList = tags.stream().map(i -> {
-            BlogTag blogTag = new BlogTag();
-            blogTag.setTagId(i.getId());
-            blogTag.setBlogId(blog.getId());
-            return blogTag;
-        }).collect(Collectors.toList());
-        boolean row3 = blogTagService.saveBatch(blogTagList);
+        Boolean row3 = ThreadPoolUtil.submit(() -> {
+            List<String> tagNames = blogDto.getTagNames();
+            List<Tag> tags = tagService.queryIsExists(tagNames);
+            List<BlogTag> blogTagList = tags.stream().map(i -> {
+                BlogTag blogTag = new BlogTag();
+                blogTag.setTagId(i.getId());
+                blogTag.setBlogId(blog.getId());
+                return blogTag;
+            }).collect(Collectors.toList());
+            boolean res = blogTagService.saveBatch(blogTagList);
+            return res;
+        });
         return row1 && row2 && row3;
     }
 
@@ -144,21 +151,27 @@ public class BlogServiceImpl extends ServiceImpl<BlogMapper, Blog> implements Bl
         blog.setStatus(0);
         boolean r1 = baseMapper.updateById(blog) > 0;
         //更新帖子详情信息
-        BlogDetail blogDetail = blogDetailService.getByBlogId(blog.getId());
-        blogDetail.setContentHtml(blogDto.getContentHtml());
-        blogDetail.setContentMd(blogDto.getContentMd());
-        boolean r2 = blogDetailService.updateById(blogDetail);
+        Boolean r2 = ThreadPoolUtil.submit(() -> {
+            BlogDetail blogDetail = blogDetailService.getByBlogId(blog.getId());
+            blogDetail.setContentHtml(blogDto.getContentHtml());
+            blogDetail.setContentMd(blogDto.getContentMd());
+            boolean res = blogDetailService.updateById(blogDetail);
+            return res;
+        });
         //更新帖子标签信息
-        blogTagService.removeByBlogId(blogDto.getId());
-        List<String> tagNames = blogDto.getTagNames();
-        List<Tag> tags = tagService.queryIsExists(tagNames);
-        List<BlogTag> blogTagList = tags.stream().map(i -> {
-            BlogTag blogTag = new BlogTag();
-            blogTag.setTagId(i.getId());
-            blogTag.setBlogId(blog.getId());
-            return blogTag;
-        }).collect(Collectors.toList());
-        boolean r3 = blogTagService.saveBatch(blogTagList);
+        Boolean r3 = ThreadPoolUtil.submit(() -> {
+            blogTagService.removeByBlogId(blogDto.getId());
+            List<String> tagNames = blogDto.getTagNames();
+            List<Tag> tags = tagService.queryIsExists(tagNames);
+            List<BlogTag> blogTagList = tags.stream().map(i -> {
+                BlogTag blogTag = new BlogTag();
+                blogTag.setTagId(i.getId());
+                blogTag.setBlogId(blog.getId());
+                return blogTag;
+            }).collect(Collectors.toList());
+            boolean res = blogTagService.saveBatch(blogTagList);
+            return res;
+        });
         //删除es中的数据
         boolean r4 = removeBlogDocument(blogDto.getId());
         return r1 && r2 && r3 && r4;
@@ -255,45 +268,51 @@ public class BlogServiceImpl extends ServiceImpl<BlogMapper, Blog> implements Bl
      * @return
      */
     @Transactional(rollbackFor = Exception.class)
-    public boolean approvedBlog(Long id) {
+    public boolean approvedBlog(Long id,Long adminId){
         Blog blog = new Blog();
         blog.setId(id);
         blog.setStatus(1);
         blog.setPublishDate(new Date());
         boolean r1 = baseMapper.updateById(blog) > 0;
-        //TODO 线程池优化
-        //通知该用户,帖子审核通过
         Blog blogInfo = baseMapper.selectById(id);
         Long userId = blogInfo.getAuthorId();
-        Message message = new Message();
-        message.setReceiveUserId(userId);
-        message.setSendUserId(AdminInfoContext.get());
-        message.setType(0);
-        message.setContent("你发布的" + "《" + blogInfo.getTitle() + "》已通过审核");
-        messageClientService.sendMessage(message);
+        //TODO 线程池优化
+        ThreadPoolUtil.submit(() -> {
+            //通知该用户,帖子审核通过
+            Message message = new Message();
+            message.setReceiveUserId(userId);
+            message.setSendUserId(adminId);
+            message.setType(0);
+            message.setContent("你发布的" + "《" + blogInfo.getTitle() + "》已通过审核");
+            messageClientService.sendMessage(message);
+            return true;
+        });
         //通知粉丝,更新了一条动态
-        List<Long> followMeUserIds = followMeUserIds(userId);
-        if(!followMeUserIds.isEmpty()){
-            SendMessage2AllDto sendMessage2AllDto = new SendMessage2AllDto();
-            sendMessage2AllDto.setIds(followMeUserIds);
-            sendMessage2AllDto.setType(3);
-            sendMessage2AllDto.setContent("有一条新动态,点击查看");
-            sendMessage2AllDto.setSendUserId(userId);
-            messageClientService.sendMessage2All(sendMessage2AllDto);
-            List<Message> messages = followMeUserIds.stream().map(i -> {
-                Message msg = new Message();
-                msg.setType(3);
-                msg.setSendUserId(userId);
-                msg.setReceiveUserId(i);
-                msg.setContent(userClientService.getById(userId).getNickName() + "发布了一条动态");
-                return msg;
-            }).collect(Collectors.toList());
-            messageClientService.saveMessage(messages);
-        }
+        ThreadPoolUtil.submit(() -> {
+            List<Long> followMeUserIds = followMeUserIds(userId);
+            if(!followMeUserIds.isEmpty()){
+                SendMessage2AllDto sendMessage2AllDto = new SendMessage2AllDto();
+                sendMessage2AllDto.setIds(followMeUserIds);
+                sendMessage2AllDto.setType(3);
+                sendMessage2AllDto.setContent("有一条新动态,点击查看");
+                sendMessage2AllDto.setSendUserId(userId);
+                messageClientService.sendMessage2All(sendMessage2AllDto);
+                List<Message> messages = followMeUserIds.stream().map(i -> {
+                    Message msg = new Message();
+                    msg.setType(3);
+                    msg.setSendUserId(userId);
+                    msg.setReceiveUserId(i);
+                    msg.setContent(userClientService.getById(userId).getNickName() + "发布了一条动态");
+                    return msg;
+                }).collect(Collectors.toList());
+                messageClientService.saveMessage(messages);
+            }
+            return true;
+        });
         //es中添加对应数据
         BlogDocument blogDocument = selectOneBlogDocument(id);
-        boolean r2 = insertBlogDocument(blogDocument);
-        return r1 & r2;
+        insertBlogDocument(blogDocument);
+        return r1;
     }
 
     private List<Long> followMeUserIds(Long id){
@@ -346,24 +365,29 @@ public class BlogServiceImpl extends ServiceImpl<BlogMapper, Blog> implements Bl
     /**
      * 帖子审核不通过
      * @param id
+     * @param reason
+     * @param adminId
      * @return
      */
     @Transactional(rollbackFor = Exception.class)
-    public boolean noApprovedBlog(Long id,String reason) {
+    public boolean noApprovedBlog(Long id,String reason,Long adminId){
         Blog blog = new Blog();
         blog.setId(id);
         blog.setStatus(2);
         boolean isSuccess = baseMapper.updateById(blog) > 0;
         //TODO 线程池优化
         //通知该用户,帖子审核未通过
-        Blog blogInfo = baseMapper.selectById(id);
-        Long userId = blogInfo.getAuthorId();
-        Message message = new Message();
-        message.setReceiveUserId(userId);
-        message.setSendUserId(AdminInfoContext.get());
-        message.setType(0);
-        message.setContent("你发布的" + "《" + blogInfo.getTitle() + "》未通过审核,原因:" + reason);
-        messageClientService.sendMessage(message);
+        ThreadPoolUtil.submit(() -> {
+            Blog blogInfo = baseMapper.selectById(id);
+            Long userId = blogInfo.getAuthorId();
+            Message message = new Message();
+            message.setReceiveUserId(userId);
+            message.setSendUserId(adminId);
+            message.setType(0);
+            message.setContent("你发布的" + "《" + blogInfo.getTitle() + "》未通过审核,原因:" + reason);
+            messageClientService.sendMessage(message);
+            return true;
+        });
         return isSuccess;
     }
 
@@ -544,12 +568,15 @@ public class BlogServiceImpl extends ServiceImpl<BlogMapper, Blog> implements Bl
         blogViewVo.setTagNames(Arrays.asList(tagNameList));
         //添加访问历史(用户登录后)
         if(Objects.nonNull(token)){
-            Long userId = JwtTokenUtil.getUserId(token);
-            ViewHistory viewHistory = new ViewHistory();
-            viewHistory.setUserId(userId);
-            viewHistory.setType(0);
-            viewHistory.setBlogId(id);
-            userClientService.addViewHistory(viewHistory);
+            ThreadPoolUtil.submit(() -> {
+                Long userId = JwtTokenUtil.getUserId(token);
+                ViewHistory viewHistory = new ViewHistory();
+                viewHistory.setUserId(userId);
+                viewHistory.setType(0);
+                viewHistory.setBlogId(id);
+                userClientService.addViewHistory(viewHistory);
+                return true;
+            });
         }
         return blogViewVo;
     }
@@ -807,5 +834,25 @@ public class BlogServiceImpl extends ServiceImpl<BlogMapper, Blog> implements Bl
         }
         EsPageInfo<BlogDocument> blogDocumentEsPageInfo = blogDocumentMapper.pageQuery(wrapper, page, size);
         return blogDocumentEsPageInfo;
+    }
+
+    /**
+     * 用户帖子浏览量
+     * @param userId
+     * @return
+     */
+    public Long viewsCount(Long userId) {
+        Long count = baseMapper.selectViewsSum(userId);
+        return count;
+    }
+
+    /**
+     * 用户帖子点赞总量
+     * @param userId
+     * @return
+     */
+    public Long likesCount(Long userId) {
+        Long count = baseMapper.selectLikesSum(userId);
+        return count;
     }
 }

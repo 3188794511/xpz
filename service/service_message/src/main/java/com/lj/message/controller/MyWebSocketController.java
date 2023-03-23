@@ -6,6 +6,7 @@ import com.lj.model.message.ChatMessageVo;
 import com.lj.model.message.Message;
 import com.lj.model.message.MyWebSocket;
 import com.lj.util.JwtTokenUtil;
+import com.lj.util.ThreadPoolUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +16,7 @@ import javax.websocket.*;
 import javax.websocket.server.PathParam;
 import javax.websocket.server.ServerEndpoint;
 import java.util.Objects;
+import java.util.concurrent.ExecutionException;
 
 import static com.lj.util.SendMessageUtil.*;
 
@@ -61,7 +63,7 @@ public class MyWebSocketController {
     }
 
     @OnMessage
-    public void onMessage(String message, Session session,@PathParam("token") String token) {
+    public void onMessage(String message, Session session,@PathParam("token") String token) throws ExecutionException, InterruptedException {
         ChatMessageVo chatMessageVo = JSON.parseObject(message, ChatMessageVo.class);
         if(Objects.nonNull(chatMessageVo.getReceiveUserId()) && Objects.nonNull(chatMessageVo.getContent())){
             chatMessageVo.setSendUserId(JwtTokenUtil.getUserId(token));
@@ -71,14 +73,15 @@ public class MyWebSocketController {
                 sendMessage2One(chatMessageVo);
             }
             //TODO 线程池优化
-            new Thread(() -> {
+            ThreadPoolUtil.submit(() -> {
                 //将消息保存到数据库
                 Message msg = new Message();
                 BeanUtils.copyProperties(chatMessageVo,msg);
                 messageService.save(msg);
                 //若接收用户未与登录用户发过消息,添加该登录用户
                 boolean isSuccess = messageService.addChatUser(chatMessageVo.getSendUserId(),chatMessageVo.getReceiveUserId());
-            }).start();
+                return isSuccess;
+            });
         }
     }
 

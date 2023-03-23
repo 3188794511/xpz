@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 @RestController
 @RequestMapping("/xpz/api/blog/blog")
@@ -192,8 +193,6 @@ public class BlogApiController {
         return Result.ok(blogs);
     }
 
-
-
     /**
      * 根据用户id查询自己的帖子(已发布)
      * @param userId
@@ -236,5 +235,27 @@ public class BlogApiController {
     public Result refreshBlog(@PathVariable Long id){
         BlogViewVo blogViewVo = blogService.refreshBlog(id);
         return Result.ok(blogViewVo);
+    }
+
+    /**
+     * 用户帖子浏览总量
+     * @param userId
+     * @return
+     */
+    @RequestMapping("/data/views/count")
+    public Result<Long> blogViews(Long userId){
+        Long data = blogService.viewsCount(userId);
+        return Result.ok(data);
+    }
+
+    /**
+     * 用户帖子点赞总量
+     * @param userId
+     * @return
+     */
+    @RequestMapping("/data/likes/count")
+    public Result<Long> blogLikes(Long userId){
+        Long data = blogService.likesCount(userId);
+        return Result.ok(data);
     }
 }

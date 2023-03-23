@@ -7,13 +7,17 @@ import com.lj.base.Result;
 import com.lj.blog.service.BlogService;
 import com.lj.dto.BlogDto;
 import com.lj.dto.BlogQueryDto1;
+import com.lj.util.JwtTokenUtil;
 import com.lj.vo.BlogVo;
 import com.lj.vo.ReasonVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.swing.*;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
 /**
  * <p>
@@ -36,8 +40,10 @@ public class BlogController {
      */
     @MyLog(type = "admin",value = "博客审核通过")
     @PutMapping("/approved/{id}")
-    public Result approvedBlog(@PathVariable Long id){
-        boolean isSuccess = blogService.approvedBlog(id);
+    public Result approvedBlog(@PathVariable Long id, HttpServletRequest request) {
+        String token = request.getHeader("token");
+        Long adminId = JwtTokenUtil.getUserId(token);
+        boolean isSuccess = blogService.approvedBlog(id,adminId);
         return isSuccess ? Result.ok() : Result.fail();
     }
 
@@ -48,8 +54,10 @@ public class BlogController {
      */
     @MyLog(type = "admin",value = "博客审核不通过")
     @PutMapping("/no-approved/{id}")
-    public Result noApprovedBlog(@PathVariable Long id,@RequestBody ReasonVo reasonVo){
-        boolean isSuccess = blogService.noApprovedBlog(id,reasonVo.getReason());
+    public Result noApprovedBlog(@PathVariable Long id,@RequestBody ReasonVo reasonVo,HttpServletRequest request){
+        String token = request.getHeader("token");
+        Long adminId = JwtTokenUtil.getUserId(token);
+        boolean isSuccess = blogService.noApprovedBlog(id,reasonVo.getReason(),adminId);
         return isSuccess ? Result.ok() : Result.fail();
     }
 
@@ -76,7 +84,6 @@ public class BlogController {
         Page<BlogVo> res = blogService.pageQueryBlog(page, size, blogQueryDto1);
         return Result.ok(res);
     }
-
 
 
     /**

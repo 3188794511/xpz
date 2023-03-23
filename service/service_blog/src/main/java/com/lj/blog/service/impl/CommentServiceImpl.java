@@ -311,4 +311,16 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment> impl
             childrenComments.stream().forEach(c -> searchChildrenIds(c,ids));
         }
     }
+
+    /**
+     * 用户的评论数量
+     * @param userId
+     * @return
+     */
+    public Long selectUserCommentCount(Long userId) {
+        LambdaQueryWrapper<Comment> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(Comment::getUserId,userId);
+        Integer count = baseMapper.selectCount(wrapper);
+        return Long.valueOf(count);
+    }
 }

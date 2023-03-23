@@ -9,6 +9,7 @@ import com.lj.user.service.UserService;
 import com.lj.user.service.ViewHistoryService;
 import com.lj.util.JwtTokenUtil;
 import com.lj.dto.LoginUserDto;
+import com.lj.vo.UserDataVo;
 import com.lj.vo.ViewHistoryVo;
 import com.lj.dto.UserInfoDto;
 import com.lj.vo.UserInfoVo;
@@ -20,6 +21,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.swing.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -323,5 +325,18 @@ public class UserApiController {
         }
         boolean isSuccess = userService.addChatUser(userId,id);
         return isSuccess ? Result.ok() : Result.fail();
+    }
+
+    /**
+     * 获取用户核心数据
+     * @param request
+     * @return
+     */
+    @GetMapping("/data/core")
+    public Result userData(HttpServletRequest request){
+        String token = request.getHeader("token");
+        Long userId = JwtTokenUtil.getUserId(token);
+        List<UserDataVo> data = userService.getUserData(userId);
+        return Result.ok(data);
     }
 }

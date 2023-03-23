@@ -42,6 +42,7 @@ public class MyWebMvcConfig implements WebMvcConfigurer {
                         ,"/xpz/api/user/*/chat-user/**"
                         ,"/xpz/api/user/info"
                         ,"/xpz/api/user/follow/**"
+                        ,"/xpz/api/user/data/core"
                         //文件上传接口
                         ,"/xpz/api/blog/file/user-upload"
                         //留言接口
@@ -54,6 +55,10 @@ public class MyWebMvcConfig implements WebMvcConfigurer {
                         ,"/xpz/api/blog/blog/follow-user-blog/**"
                         //消息接口
                         ,"/xpz/api/message/**"
-                       );
+                       )
+                    .excludePathPatterns(
+                        //用户接口
+                        "/xpz/api/user/history/save"
+                    );
     }
 }

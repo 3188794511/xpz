@@ -112,29 +112,6 @@
 				<artifactId>fastjson</artifactId>
 				<version>${fastjson.version}</version>
 			</dependency>
-			<dependency>
-				<groupId>com.aliyun</groupId>
-				<artifactId>aliyun-java-sdk-core</artifactId>
-				<version>${aliyun.version}</version>
-			</dependency>
-			<!--swagger-->
-			<dependency>
-				<groupId>io.springfox</groupId>
-				<artifactId>springfox-swagger2</artifactId>
-				<version>${swagger.version}</version>
-			</dependency>
-			<!--swagger ui-->
-			<dependency>
-				<groupId>io.springfox</groupId>
-				<artifactId>springfox-swagger-ui</artifactId>
-				<version>${swagger.version}</version>
-			</dependency>
-			<!--aliyunOSS-->
-			<dependency>
-				<groupId>com.aliyun.oss</groupId>
-				<artifactId>aliyun-sdk-oss</artifactId>
-				<version>${aliyun.oss.version}</version>
-			</dependency>
 		</dependencies>
 	</dependencyManagement>
 	

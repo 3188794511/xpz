@@ -726,7 +726,7 @@ public class BlogServiceImpl extends ServiceImpl<BlogMapper, Blog> implements Bl
      * @param userId
      * @return
      */
-    public Page<BlogVo> pageQueryFollowUserBlog(Long page, Long size, Long userId) {
+    public Page<BlogVo> pageQueryFollowUserBlog(Long page, Long size, Long userId,Long blogAuthorId) {
         Page<BlogVo> res = new Page<>(page,size);
         //起始偏移量
         page = (page - 1) * size;
@@ -736,11 +736,11 @@ public class BlogServiceImpl extends ServiceImpl<BlogMapper, Blog> implements Bl
         Long total = 0L;
         if(!myFollowUsers.isEmpty()){
             Set<Long> followUsers = myFollowUsers.stream().map(i -> Long.valueOf(i)).collect(Collectors.toSet());
-            records = baseMapper.selectFollowUserBlog(page,size,followUsers);
+            records = baseMapper.selectFollowUserBlog(page,size,followUsers,blogAuthorId);
             records.forEach(i -> {
                i.setTagNames(List.of( i.getTagNamesAsStr().split(",")));
             });
-            total = baseMapper.selectFollowUserBlogCount(myFollowUsers);
+            total = baseMapper.selectFollowUserBlogCount(myFollowUsers,blogAuthorId);
         }
         res.setTotal(total);
         res.setRecords(records);

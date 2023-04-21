@@ -159,8 +159,11 @@ public class BlogServiceImpl extends ServiceImpl<BlogMapper, Blog> implements Bl
             return blogTag;
         }).collect(Collectors.toList());
         boolean r3 = blogTagService.saveBatch(blogTagList);
-        //删除es中的数据
-        boolean r4 = removeBlogDocument(blogDto.getId());
+        //删除es中的数据(若存在)
+        boolean r4 = true;
+        if(Objects.nonNull(selectOneBlogDocument(blogDto.getId()))){
+             r4 = removeBlogDocument(blogDto.getId());
+        }
         return r1 && r2 && r3 && r4;
     }
 
@@ -216,8 +219,14 @@ public class BlogServiceImpl extends ServiceImpl<BlogMapper, Blog> implements Bl
         boolean r2 = blogTagService.removeByIds(blogTagIds);
         //删除帖子基本内容
         boolean r3 = baseMapper.deleteBatchIds(ids) > 0;
-        //删除es中数据
-        boolean r4 = batchRemoveBlogDocument(ids);
+        //删除es中数据(若存在)
+        List<Long> delIds = ids.stream()
+                .filter(id -> Objects.nonNull(selectOneBlogDocument(id)))
+                .collect(Collectors.toList());
+        boolean r4 = true;
+        if(!delIds.isEmpty()){
+            r4 = batchRemoveBlogDocument(delIds);
+        }
         return r1 & r2 & r3 & r4;
     }
 

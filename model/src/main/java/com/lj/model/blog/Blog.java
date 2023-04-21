@@ -82,7 +82,7 @@ public class Blog extends BaseModel implements Serializable {
      * 博客发布时间
      */
     @TableField("publish_date")
-    @JsonFormat(pattern = "yyyy-MM-dd")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date publishDate;
 
 }

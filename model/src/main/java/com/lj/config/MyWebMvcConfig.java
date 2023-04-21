@@ -54,6 +54,7 @@ public class MyWebMvcConfig implements WebMvcConfigurer {
                         ,"/xpz/api/blog/blog/follow-user-blog/**"
                         //消息接口
                         ,"/xpz/api/message/**"
-                       );
+                       )
+                .excludePathPatterns("/xpz/api/user/history/save");
     }
 }

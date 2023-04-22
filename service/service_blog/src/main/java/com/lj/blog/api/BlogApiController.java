@@ -119,7 +119,7 @@ public class BlogApiController {
      * @return
      */
     @GetMapping("/follow-user-blog/{page}/{size}")
-    public Result pageQueryFollowUserBlog(@PathVariable Long page,@PathVariable Long size,Long blogAuthorId,HttpServletRequest request){
+    public Result pageQueryFollowUserBlog(@PathVariable Long page,@PathVariable Long size,@RequestParam(required = false,value = "blogAuthorId") Long blogAuthorId,HttpServletRequest request){
         Long userId = JwtTokenUtil.getUserId(request.getHeader("token"));
         Page<BlogVo> res = blogService.pageQueryFollowUserBlog(page,size,userId,blogAuthorId);
         return Result.ok(res);

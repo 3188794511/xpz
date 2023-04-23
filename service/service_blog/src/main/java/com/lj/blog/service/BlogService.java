@@ -37,7 +37,7 @@ public interface BlogService extends IService<Blog> {
 
     Map<String, Object> reportsBlogTypes();
 
-    List<HotBlogVo> hotFiveBlogs();
+    List<HotBlogVo> hotBlogs();
 
     Page<BlogVo> pageQueryPublishBlog(Long page, Long size, BlogQueryDto2 blogQueryDto2);
 
@@ -82,4 +82,6 @@ public interface BlogService extends IService<Blog> {
     List<HotBlogVo> homePageBlogs(int i);
 
     Page<BlogVo> pageQueryFollowUserBlog(Long page, Long size, Long userId,Long blogAuthorId);
+
+    List<UserCoreDataVo> getUserBlogData(Long userId);
 }

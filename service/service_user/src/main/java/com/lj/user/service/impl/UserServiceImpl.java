@@ -5,7 +5,9 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.lj.base.Result;
+import com.lj.client.BlogClientService;
 import com.lj.client.MessageClientService;
+import com.lj.constant.IconConstant;
 import com.lj.model.user.User;
 import com.lj.user.mapper.UserMapper;
 import com.lj.user.service.UserService;
@@ -17,6 +19,7 @@ import com.lj.dto.UserQueryDto;
 import com.lj.vo.UserBaseInfo;
 import com.lj.dto.UserUpdateDto;
 import com.lj.dto.UserInfoDto;
+import com.lj.vo.UserCoreDataVo;
 import com.lj.vo.UserInfoVo;
 import com.lj.vo.UserSecretInfo;
 import lombok.extern.slf4j.Slf4j;
@@ -39,6 +42,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper,User> implements Use
     private StringRedisTemplate redisTemplate;
     @Autowired
     private MessageClientService messageClientService;
+    @Autowired
+    private BlogClientService blogClientService;
 
     /**
      * 管理员登录
@@ -433,5 +438,20 @@ public class UserServiceImpl extends ServiceImpl<UserMapper,User> implements Use
             isSuccess = ops.remove(key, id.toString()) > 0;
         }
         return isSuccess;
+    }
+
+    /**
+     * 查询用户中心数据
+     * @param userId
+     * @return
+     */
+    public List<UserCoreDataVo> fetchUserCoreData(Long userId) {
+        List<UserCoreDataVo> userBlogData = blogClientService.getUserBlogData(userId);
+        //查询用户粉丝数
+        Long followMeUserCount = followMeUserCount(userId);
+        UserCoreDataVo userCoreDataVo = IconConstant.ICONS.get(3);
+        userCoreDataVo.setVal(followMeUserCount);
+        userBlogData.add(userCoreDataVo);
+        return userBlogData;
     }
 }

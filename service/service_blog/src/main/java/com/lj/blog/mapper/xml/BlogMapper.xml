@@ -332,4 +332,18 @@
 			</choose>
 		</where>
 	</select>
+	
+	<select id="selectViewsData" resultType="java.lang.Long">
+		select
+			sum(b.views) as views
+		from blog b
+		where b.author_id = #{userId} and b.is_deleted = 0 and b.status = 1
+	</select>
+	
+	<select id="selectLikesData" resultType="java.lang.Long">
+		select
+			sum(b.likes) as likes
+		from blog b
+		where b.author_id = #{userId} and b.is_deleted = 0 and b.status = 1
+	</select>
 </mapper>

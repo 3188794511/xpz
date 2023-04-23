@@ -139,12 +139,12 @@ public class BlogApiController {
     }
 
     /**
-     * 查询最热门的的5篇帖子(已发布)
+     * 查询最热门的的7篇帖子(已发布)
      * @return
      */
     @GetMapping("/hot")
     public Result hotBlogs(){
-        List<HotBlogVo> blogs = blogService.hotFiveBlogs();
+        List<HotBlogVo> blogs = blogService.hotBlogs();
         return Result.ok(blogs);
     }
 
@@ -220,7 +220,7 @@ public class BlogApiController {
      * @param id
      * @return
      */
-    @MyLog(value = "点赞帖子")
+    @MyLog(value = "点赞或取消点赞帖子")
     @PutMapping("/likes/{id}")
     public Result likes(@PathVariable Long id){
         Result res =  blogService.likes(id);
@@ -236,5 +236,16 @@ public class BlogApiController {
     public Result refreshBlog(@PathVariable Long id){
         BlogViewVo blogViewVo = blogService.refreshBlog(id);
         return Result.ok(blogViewVo);
+    }
+
+    /**
+     * 获取用户博客的例如浏览量、点赞量等数据
+     * @param userId
+     * @return
+     */
+    @GetMapping("/user-blog-data")
+    public List<UserCoreDataVo> getUserBlogData(Long userId){
+        List<UserCoreDataVo> data = blogService.getUserBlogData(userId);
+        return data;
     }
 }

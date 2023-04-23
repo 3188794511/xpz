@@ -44,14 +44,18 @@ public class CommentApiController {
     }
 
     /**
-     * 查询评论
+     * 查询评论(自己发布的博客下的评论)
      * @param page
      * @param size
      * @param commentQueryDto
+     * @param request
      * @return
      */
     @GetMapping("search/{page}/{size}")
-    public Result searchCommentByParams(@PathVariable Long page,@PathVariable Long size,CommentQueryDto commentQueryDto){
+    public Result searchCommentByParams(@PathVariable Long page,@PathVariable Long size,CommentQueryDto commentQueryDto,HttpServletRequest request){
+        String token = request.getHeader("token");
+        Long userId = JwtTokenUtil.getUserId(token);
+        commentQueryDto.setUserId(userId);
         Page<CommentVo> commentVoList = commentService.pageParamQuery(page,size,commentQueryDto);
         return Result.ok(commentVoList);
     }

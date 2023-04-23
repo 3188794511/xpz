@@ -220,4 +220,8 @@ public class BlogApplicationTest {
         df.show();
     }
 
+    @Test
+    void testData() {
+
+    }
 }

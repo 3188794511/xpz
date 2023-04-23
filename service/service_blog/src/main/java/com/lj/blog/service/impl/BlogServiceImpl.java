@@ -13,6 +13,7 @@ import com.lj.blog.mapper.BlogMapper;
 import com.lj.blog.mapper.es.BlogDocumentMapper;
 import com.lj.client.MessageClientService;
 import com.lj.client.UserClientService;
+import com.lj.constant.IconConstant;
 import com.lj.constant.RedisConstant;
 import com.lj.dto.*;
 import com.lj.model.blog.Blog;
@@ -37,6 +38,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 import static com.lj.constant.RedisConstant.LIKE_BLOG;
@@ -67,6 +69,8 @@ public class BlogServiceImpl extends ServiceImpl<BlogMapper, Blog> implements Bl
     private TagService tagService;
     @Autowired
     private TypeService typeService;
+    @Autowired
+    private CommentService commentService;
 
     /**
      *
@@ -404,11 +408,11 @@ public class BlogServiceImpl extends ServiceImpl<BlogMapper, Blog> implements Bl
     }
 
     /**
-     * 查询最热门的的5篇帖子(已发布)
+     * 查询最热门的的7篇帖子(已发布)
      * @return
      */
-    public List<HotBlogVo> hotFiveBlogs() {
-        IPage<Blog> page = new Page<>(1,5);
+    public List<HotBlogVo> hotBlogs() {
+        IPage<Blog> page = new Page<>(1,7);
         LambdaQueryWrapper<Blog> wrapper = new LambdaQueryWrapper<>();
         wrapper.orderByDesc(Blog::getViews)
                 .eq(Blog::getStatus,1)
@@ -644,6 +648,7 @@ public class BlogServiceImpl extends ServiceImpl<BlogMapper, Blog> implements Bl
         return blogDocument;
     }
 
+
     /**
      * 查询所有的BlogDocuments
      * @return
@@ -816,5 +821,31 @@ public class BlogServiceImpl extends ServiceImpl<BlogMapper, Blog> implements Bl
         }
         EsPageInfo<BlogDocument> blogDocumentEsPageInfo = blogDocumentMapper.pageQuery(wrapper, page, size);
         return blogDocumentEsPageInfo;
+    }
+
+    /**
+     * 获取用户博客的例如浏览量、点赞量等数据
+     * @param userId
+     * @return
+     */
+    public List<UserCoreDataVo> getUserBlogData(Long userId) {
+        Long views = baseMapper.selectViewsData(userId);
+        Long likes = baseMapper.selectLikesData(userId);
+        Long comments = commentService.getUserBlogsCommentNums(userId);
+        List<UserCoreDataVo> coreDataVos = new ArrayList<>();
+        for (int i = 0; i < 3; i++) {
+            UserCoreDataVo userCoreDataVo = IconConstant.ICONS.get(i);
+            if(i == 0){
+                userCoreDataVo.setVal(views);
+            }
+            else if(i == 1){
+                userCoreDataVo.setVal(likes);
+            }
+            else{
+                userCoreDataVo.setVal(comments);
+            }
+            coreDataVos.add(userCoreDataVo);
+        }
+        return coreDataVos;
     }
 }

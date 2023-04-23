@@ -6,6 +6,7 @@ import com.lj.base.Result;
 import com.lj.model.user.User;
 import com.lj.dto.LoginUserDto;
 import com.lj.dto.UserInfoDto;
+import com.lj.vo.UserCoreDataVo;
 import com.lj.vo.UserInfoVo;
 import com.lj.dto.UserQueryDto;
 import com.lj.vo.UserBaseInfo;
@@ -58,4 +59,6 @@ public interface UserService extends IService<User> {
     UserBaseInfo getUserBaseInfo(Long id);
 
     Result updateUserPwd(UserSecretInfo UserSecretInfo, Long userId);
+
+    List<UserCoreDataVo> fetchUserCoreData(Long userId);
 }

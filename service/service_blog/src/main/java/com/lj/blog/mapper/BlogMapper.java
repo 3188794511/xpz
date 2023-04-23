@@ -56,4 +56,8 @@ public interface BlogMapper extends BaseMapper<Blog> {
             ,@Param("myFollowUsers") Set<Long> myFollowUsers,@Param("blogAuthorId")Long blogAuthorId);
 
     Long selectFollowUserBlogCount(@Param("myFollowUsers") Set<String> myFollowUsers,@Param("blogAuthorId")Long blogAuthorId);
+
+    Long selectViewsData(@Param("userId") Long userId);
+
+    Long selectLikesData(@Param("userId") Long userId);
 }

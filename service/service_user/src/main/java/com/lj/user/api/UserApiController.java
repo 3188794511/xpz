@@ -9,6 +9,7 @@ import com.lj.user.service.UserService;
 import com.lj.user.service.ViewHistoryService;
 import com.lj.util.JwtTokenUtil;
 import com.lj.dto.LoginUserDto;
+import com.lj.vo.UserCoreDataVo;
 import com.lj.vo.ViewHistoryVo;
 import com.lj.dto.UserInfoDto;
 import com.lj.vo.UserInfoVo;
@@ -323,5 +324,18 @@ public class UserApiController {
         }
         boolean isSuccess = userService.addChatUser(userId,id);
         return isSuccess ? Result.ok() : Result.fail();
+    }
+
+    /**
+     * 查询用户中心数据
+     * @param request
+     * @return
+     */
+    @GetMapping("/data/core")
+    public Result getUserCoreData(HttpServletRequest request){
+        String token = request.getHeader("token");
+        Long userId = JwtTokenUtil.getUserId(token);
+        List<UserCoreDataVo> data = userService.fetchUserCoreData(userId);
+        return Result.ok(data);
     }
 }

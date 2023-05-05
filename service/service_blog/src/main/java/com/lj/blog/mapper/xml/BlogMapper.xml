@@ -335,14 +335,14 @@
 	
 	<select id="selectViewsData" resultType="java.lang.Long">
 		select
-			sum(b.views) as views
+			if(sum(b.views) != null,sum(b.views),0) as views
 		from blog b
 		where b.author_id = #{userId} and b.is_deleted = 0 and b.status = 1
 	</select>
 	
 	<select id="selectLikesData" resultType="java.lang.Long">
 		select
-			sum(b.likes) as likes
+			if(sum(b.likes) != null,sum(b.likes),0) as likes
 		from blog b
 		where b.author_id = #{userId} and b.is_deleted = 0 and b.status = 1
 	</select>

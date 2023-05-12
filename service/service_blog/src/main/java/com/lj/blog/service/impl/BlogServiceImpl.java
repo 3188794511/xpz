@@ -15,6 +15,7 @@ import com.lj.client.MessageClientService;
 import com.lj.client.UserClientService;
 import com.lj.constant.IconConstant;
 import com.lj.constant.RedisConstant;
+import com.lj.constant.UserBehaviorConstant;
 import com.lj.dto.*;
 import com.lj.model.blog.Blog;
 import com.lj.model.blog.BlogDetail;
@@ -24,6 +25,7 @@ import com.lj.model.blog.Tag;
 import com.lj.model.message.Message;
 import com.lj.model.message.SendMessage2AllDto;
 import com.lj.model.user.User;
+import com.lj.model.user.UserLog;
 import com.lj.model.user.ViewHistory;
 import com.lj.util.*;
 import com.lj.vo.*;
@@ -563,6 +565,12 @@ public class BlogServiceImpl extends ServiceImpl<BlogMapper, Blog> implements Bl
             viewHistory.setType(0);
             viewHistory.setBlogId(id);
             userClientService.addViewHistory(viewHistory);
+            //记录用户行为日志
+            UserLog userLog = new UserLog();
+            userLog.setUserId(userId);
+            userLog.setBlogId(id);
+            userLog.setBehavior(UserBehaviorConstant.VIEW_BLOG);
+            userClientService.addUserLog(userLog);
         }
         return blogViewVo;
     }
@@ -627,6 +635,12 @@ public class BlogServiceImpl extends ServiceImpl<BlogMapper, Blog> implements Bl
             operations.remove(key,userId.toString());
             blog.setLikes(operations.size(key));
             boolean isSuccess = baseMapper.updateById(blog) > 0;
+            //记录用户行为日志
+            UserLog userLog = new UserLog();
+            userLog.setUserId(userId);
+            userLog.setBlogId(id);
+            userLog.setBehavior(UserBehaviorConstant.CANCEL_LIKE_BLOG);
+            userClientService.addUserLog(userLog);
             return isSuccess ? Result.ok().message("取消点赞成功") : Result.fail().message("取消点赞失败");
         }
         else{
@@ -634,6 +648,12 @@ public class BlogServiceImpl extends ServiceImpl<BlogMapper, Blog> implements Bl
             operations.add(key,userId.toString());
             blog.setLikes(operations.size(key));
             boolean isSuccess = baseMapper.updateById(blog) > 0;
+            //记录用户行为日志
+            UserLog userLog = new UserLog();
+            userLog.setUserId(userId);
+            userLog.setBlogId(id);
+            userLog.setBehavior(UserBehaviorConstant.LIKE_BLOG);
+            userClientService.addUserLog(userLog);
             return isSuccess ? Result.ok().message("点赞成功") : Result.fail().message("点赞失败");
         }
     }

@@ -8,9 +8,11 @@ import com.lj.blog.mapper.CommentMapper;
 import com.lj.blog.service.BlogService;
 import com.lj.blog.service.CommentService;
 import com.lj.client.UserClientService;
+import com.lj.constant.UserBehaviorConstant;
 import com.lj.model.blog.Blog;
 import com.lj.model.blog.Comment;
 import com.lj.model.user.User;
+import com.lj.model.user.UserLog;
 import com.lj.util.UserInfoContext;
 import com.lj.dto.CommentQueryDto;
 import com.lj.vo.CommentUser;
@@ -75,6 +77,12 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment> impl
         comment.setBlogId(blogId);
         comment.setContent(content);
         boolean isSuccess = baseMapper.insert(comment) > 0;
+        //记录用户行为日志
+        UserLog userLog = new UserLog();
+        userLog.setUserId(commentUserId);
+        userLog.setBlogId(blogId);
+        userLog.setBehavior(UserBehaviorConstant.COMMENT_BLOG);
+        userClientService.addUserLog(userLog);
         return isSuccess ? Result.ok(comment.getId()).message("发表评论成功") : Result.fail().message("发表评论失败");
     }
 

@@ -23,7 +23,8 @@ public class MyWebMvcConfig implements WebMvcConfigurer {
                         ,"/xpz/admin/message/send"
                         ,"/xpz/admin/message/save"
                         ,"/xpz/admin/message/send-all"
-                        ,"/xpz/admin/message/online");
+                        ,"/xpz/admin/message/online"
+                        ,"/xpz/admin/user/user-log/save");
         //添加用户拦截器以及响应路径
         /**用户
          * 查看、修改个人信息(包括头像),关注,取关用户需要登录

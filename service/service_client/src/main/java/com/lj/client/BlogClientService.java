@@ -3,6 +3,7 @@ package com.lj.client;
 import com.lj.vo.UserCoreDataVo;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
@@ -12,4 +13,7 @@ public interface BlogClientService {
 
     @GetMapping("/xpz/api/blog/blog/user-blog-data")
     List<UserCoreDataVo> getUserBlogData(@RequestParam("userId") Long userId);
+
+    @GetMapping("/xpz/api/blog/blog/user-blog-id/{userId}")
+    List<Long> getUserBlogIds(@PathVariable("userId") Long userId);
 }

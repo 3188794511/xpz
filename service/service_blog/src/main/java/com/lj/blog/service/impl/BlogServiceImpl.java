@@ -868,4 +868,22 @@ public class BlogServiceImpl extends ServiceImpl<BlogMapper, Blog> implements Bl
         }
         return coreDataVos;
     }
+
+    /**
+     * 获取用户发布的所有博客的id(通过审核的)
+     * @param userId
+     * @return
+     */
+    public List<Long> listUserBlogIds(Long userId) {
+        LambdaQueryWrapper<Blog> wrapper = new LambdaQueryWrapper<>();
+        wrapper.select(Blog::getId)
+                .eq(Blog::getAuthorId,userId)
+                .eq(Blog::getStatus,1);
+        List<Blog> blogs = baseMapper.selectList(wrapper);
+        List<Long> blogIds = new ArrayList<>();
+        if(!blogs.isEmpty()){
+            blogIds = blogs.stream().map(i -> i.getId()).collect(Collectors.toList());
+        }
+        return blogIds;
+    }
 }

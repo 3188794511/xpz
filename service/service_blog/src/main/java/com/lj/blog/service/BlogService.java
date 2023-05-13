@@ -84,4 +84,6 @@ public interface BlogService extends IService<Blog> {
     Page<BlogVo> pageQueryFollowUserBlog(Long page, Long size, Long userId,Long blogAuthorId);
 
     List<UserCoreDataVo> getUserBlogData(Long userId);
+
+    List<Long> listUserBlogIds(Long userId);
 }

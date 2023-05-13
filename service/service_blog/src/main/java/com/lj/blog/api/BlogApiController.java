@@ -18,6 +18,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.Path;
 import java.util.List;
 
 @RestController
@@ -247,5 +248,16 @@ public class BlogApiController {
     public List<UserCoreDataVo> getUserBlogData(Long userId){
         List<UserCoreDataVo> data = blogService.getUserBlogData(userId);
         return data;
+    }
+
+    /**
+     * 获取用户所有发布博客的id
+     * @param userId
+     * @return
+     */
+    @GetMapping("/user-blog-id/{userId}")
+    public List<Long> getUserBlogIds(@PathVariable Long userId){
+        List<Long> blogIds = blogService.listUserBlogIds(userId);
+        return blogIds;
     }
 }

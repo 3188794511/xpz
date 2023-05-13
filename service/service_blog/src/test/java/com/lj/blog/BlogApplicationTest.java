@@ -33,6 +33,9 @@ import scala.util.Properties;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -222,6 +225,12 @@ public class BlogApplicationTest {
 
     @Test
     void testData() {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        LocalDate endDate = LocalDate.now();
+        LocalDate startDate = endDate.minus(6, ChronoUnit.DAYS);
 
+        for (LocalDate date = startDate; date.isBefore(endDate.plusDays(1)); date = date.plusDays(1)) {
+            System.out.println(date.format(formatter));
+        }
     }
 }

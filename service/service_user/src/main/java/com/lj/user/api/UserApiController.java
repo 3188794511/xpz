@@ -5,6 +5,7 @@ import com.lj.annotation.MyLog;
 import com.lj.base.Result;
 import com.lj.model.user.User;
 import com.lj.model.user.ViewHistory;
+import com.lj.user.service.UserLogService;
 import com.lj.user.service.UserService;
 import com.lj.user.service.ViewHistoryService;
 import com.lj.util.JwtTokenUtil;
@@ -23,6 +24,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -33,6 +35,8 @@ import static com.lj.constant.RedisConstant.CHAT_WITH_ME_USER;
 public class UserApiController {
     @Autowired
     private UserService userService;
+    @Autowired
+    private UserLogService userLogService;
     @Autowired
     private ViewHistoryService viewHistoryService;
     @Autowired
@@ -338,4 +342,19 @@ public class UserApiController {
         List<UserCoreDataVo> data = userService.fetchUserCoreData(userId);
         return Result.ok(data);
     }
+
+    /**
+     * 查询用户近七天的博客访问量
+     * @param request
+     * @return
+     */
+    @GetMapping("/data/seven-days-data")
+    public Result getUserSevenDaysData(HttpServletRequest request){
+        String token = request.getHeader("token");
+        Long userId = JwtTokenUtil.getUserId(token);
+        List<Map<String,String>> data = userLogService.fetchUserSevenDaysData(userId);
+        return Result.ok(data);
+    }
+
+
 }

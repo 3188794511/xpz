@@ -3,6 +3,10 @@ package com.lj.user.mapper;
 import com.lj.model.user.UserLog;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
+
+import java.time.LocalDate;
+import java.util.List;
 
 /**
  * <p>
@@ -15,4 +19,5 @@ import org.apache.ibatis.annotations.Mapper;
 @Mapper
 public interface UserLogMapper extends BaseMapper<UserLog> {
 
+    Long selectUserSevenDaysData(@Param("date") LocalDate date, @Param("blogIds")List<Long> blogIds);
 }

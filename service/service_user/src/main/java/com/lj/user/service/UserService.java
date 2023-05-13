@@ -14,6 +14,7 @@ import com.lj.dto.UserUpdateDto;
 import com.lj.vo.UserSecretInfo;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 public interface UserService extends IService<User> {
@@ -61,4 +62,5 @@ public interface UserService extends IService<User> {
     Result updateUserPwd(UserSecretInfo UserSecretInfo, Long userId);
 
     List<UserCoreDataVo> fetchUserCoreData(Long userId);
+
 }

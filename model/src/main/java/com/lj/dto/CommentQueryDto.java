@@ -11,6 +11,8 @@ public class CommentQueryDto {
     private String blogTitle;
     //评论用户姓名
     private String commentUsername;
+    //当前用户id
+    private Long userId;
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
     private Date createTime;
 }

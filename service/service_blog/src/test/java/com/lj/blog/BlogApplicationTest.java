@@ -17,20 +17,31 @@ import com.lj.dto.LeaveMessageQueryDto;
 import com.lj.dto.BlogQueryDto2;
 import com.lj.dto.BlogSearchDto;
 import com.lj.vo.BlogViewVo;
+import org.apache.spark.api.java.JavaRDD;
+import org.apache.spark.sql.DataFrameReader;
+import org.apache.spark.sql.Dataset;
+import org.apache.spark.sql.Row;
+import org.apache.spark.sql.SparkSession;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.redis.core.SetOperations;
 import org.springframework.data.redis.core.StringRedisTemplate;
+import scala.util.Properties;
+
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
 @SpringBootTest
+
 public class BlogApplicationTest {
     @Autowired
     private CommentService commentService;
@@ -46,6 +57,8 @@ public class BlogApplicationTest {
     private BlogMapper blogMapper;
     @Autowired
     private TypeService typeService;
+    @Autowired
+    private SparkSession sparkSession;
 
     @Test
     void name() {
@@ -136,6 +149,11 @@ public class BlogApplicationTest {
     }
 
     @Test
+    void testQueryIndex() {
+        
+    }
+
+    @Test
     void testCreateIndex() {
         blogDocumentMapper.deleteIndex("blog");
         Boolean isSuccess = blogDocumentMapper.createIndex("blog");
@@ -195,5 +213,24 @@ public class BlogApplicationTest {
     @Test
     void testUserFollowBlog() {
         System.out.println(SendMessageUtil.webSocketMap.hashCode());
+    }
+
+    @Test
+    void testSparkSession() {
+        String jdbcUrl = "jdbc:mysql://192.168.171.200/xpz_blog?user=root&password=123456&useSSL=false";
+        DataFrameReader reader = sparkSession.read().format("jdbc").option("url", jdbcUrl);
+        Dataset<Row> df = reader.option("query", "SELECT * FROM type").load();
+        df.show();
+    }
+
+    @Test
+    void testData() {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        LocalDate endDate = LocalDate.now();
+        LocalDate startDate = endDate.minus(6, ChronoUnit.DAYS);
+
+        for (LocalDate date = startDate; date.isBefore(endDate.plusDays(1)); date = date.plusDays(1)) {
+            System.out.println(date.format(formatter));
+        }
     }
 }

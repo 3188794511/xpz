@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lj.user.mapper.UserLogMapper">
+	
+	<select id="selectUserSevenDaysData" resultType="java.lang.Long">
+		select
+			count(*) as views
+		from user_log ul
+		<where>
+			ul.behavior = '浏览博客' and date(ul.create_time) = date(#{date})
+			and ul.blog_id in
+		<foreach collection="blogIds" open="(" separator="," close=")" item="blogId">
+			#{blogId}
+		</foreach>
+		</where>
+	</select>
+</mapper>

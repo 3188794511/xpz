@@ -11,7 +11,6 @@ import com.lj.vo.*;
 
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ExecutionException;
 
 /**
  * <p>
@@ -32,13 +31,13 @@ public interface BlogService extends IService<Blog> {
 
     BlogDto getBlogById(Long id);
 
-    boolean approvedBlog(Long id,Long adminId);
+    boolean approvedBlog(Long id);
 
     Map<String, Object> reportsBlogTags();
 
     Map<String, Object> reportsBlogTypes();
 
-    List<HotBlogVo> hotFiveBlogs();
+    List<HotBlogVo> hotBlogs();
 
     Page<BlogVo> pageQueryPublishBlog(Long page, Long size, BlogQueryDto2 blogQueryDto2);
 
@@ -58,7 +57,7 @@ public interface BlogService extends IService<Blog> {
 
     boolean userSaveBlog(BlogDto blogDto);
 
-    boolean noApprovedBlog(Long id,String reason,Long adminId);
+    boolean noApprovedBlog(Long id,String reason);
 
     List<HotBlogVo> getRecommendBlogs(Long id);
 
@@ -82,9 +81,9 @@ public interface BlogService extends IService<Blog> {
 
     List<HotBlogVo> homePageBlogs(int i);
 
-    Page<BlogVo> pageQueryFollowUserBlog(Long page, Long size, Long userId);
+    Page<BlogVo> pageQueryFollowUserBlog(Long page, Long size, Long userId,Long blogAuthorId);
 
-    Long viewsCount(Long userId);
+    List<UserCoreDataVo> getUserBlogData(Long userId);
 
-    Long likesCount(Long userId);
+    List<Long> listUserBlogIds(Long userId);
 }

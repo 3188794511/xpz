@@ -34,5 +34,6 @@ public interface CommentService extends IService<Comment> {
 
     Result removeCommentByIds(List<Long> ids);
 
-    Long selectUserCommentCount(Long userId);
+    Long getUserBlogsCommentNums(Long userId);
+
 }

@@ -5,11 +5,12 @@ import com.lj.annotation.MyLog;
 import com.lj.base.Result;
 import com.lj.model.user.User;
 import com.lj.model.user.ViewHistory;
+import com.lj.user.service.UserLogService;
 import com.lj.user.service.UserService;
 import com.lj.user.service.ViewHistoryService;
 import com.lj.util.JwtTokenUtil;
 import com.lj.dto.LoginUserDto;
-import com.lj.vo.UserDataVo;
+import com.lj.vo.UserCoreDataVo;
 import com.lj.vo.ViewHistoryVo;
 import com.lj.dto.UserInfoDto;
 import com.lj.vo.UserInfoVo;
@@ -21,9 +22,9 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.swing.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -34,6 +35,8 @@ import static com.lj.constant.RedisConstant.CHAT_WITH_ME_USER;
 public class UserApiController {
     @Autowired
     private UserService userService;
+    @Autowired
+    private UserLogService userLogService;
     @Autowired
     private ViewHistoryService viewHistoryService;
     @Autowired
@@ -328,15 +331,30 @@ public class UserApiController {
     }
 
     /**
-     * 获取用户核心数据
+     * 查询用户中心数据
      * @param request
      * @return
      */
     @GetMapping("/data/core")
-    public Result userData(HttpServletRequest request){
+    public Result getUserCoreData(HttpServletRequest request){
         String token = request.getHeader("token");
         Long userId = JwtTokenUtil.getUserId(token);
-        List<UserDataVo> data = userService.getUserData(userId);
+        List<UserCoreDataVo> data = userService.fetchUserCoreData(userId);
         return Result.ok(data);
     }
+
+    /**
+     * 查询用户近七天的博客访问量
+     * @param request
+     * @return
+     */
+    @GetMapping("/data/seven-days-data")
+    public Result getUserSevenDaysData(HttpServletRequest request){
+        String token = request.getHeader("token");
+        Long userId = JwtTokenUtil.getUserId(token);
+        List<Map<String,String>> data = userLogService.fetchUserSevenDaysData(userId);
+        return Result.ok(data);
+    }
+
+
 }

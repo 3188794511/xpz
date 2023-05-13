@@ -292,10 +292,17 @@
 		left join xpz_user.tb_user u on u.id = b.author_id
 		<where>
 			b.status = 1 and b.is_deleted = 0 and bt.is_deleted = 0
-			and b.author_id in
-			<foreach collection="myFollowUsers" separator="," item="item" open="(" close=")">
-				#{item}
-			</foreach>
+			<choose>
+				<when test="blogAuthorId != null">
+					and b.author_id = #{blogAuthorId}
+				</when>
+				<otherwise>
+					and b.author_id in
+					<foreach collection="myFollowUsers" separator="," item="item" open="(" close=")">
+						#{item}
+					</foreach>
+				</otherwise>
+			</choose>
 		</where>
 		group by b.id
 		order by b.publish_date desc,b.update_time desc
@@ -312,28 +319,31 @@
 		left join xpz_user.tb_user u on u.id = b.author_id
 		<where>
 			b.status = 1 and b.is_deleted = 0 and bt.is_deleted = 0
-			and b.author_id in
-			<foreach collection="myFollowUsers" separator="," item="item" open="(" close=")">
-				#{item}
-			</foreach>
+			<choose>
+				<when test="blogAuthorId != null">
+					and b.author_id = #{blogAuthorId}
+				</when>
+				<otherwise>
+					and b.author_id in
+					<foreach collection="myFollowUsers" separator="," item="item" open="(" close=")">
+						#{item}
+					</foreach>
+				</otherwise>
+			</choose>
 		</where>
 	</select>
 	
-	<select id="selectViewsSum" resultType="java.lang.Long">
+	<select id="selectViewsData" resultType="java.lang.Long">
 		select
-		SUM(views)
+			if(sum(b.views) != null,sum(b.views),0) as views
 		from blog b
-		<where>
-			b.author_id = #{userId}
-		</where>
+		where b.author_id = #{userId} and b.is_deleted = 0 and b.status = 1
 	</select>
 	
-	<select id="selectLikesSum" resultType="java.lang.Long">
+	<select id="selectLikesData" resultType="java.lang.Long">
 		select
-		SUM(likes)
+			if(sum(b.likes) != null,sum(b.likes),0) as likes
 		from blog b
-		<where>
-			b.author_id = #{userId}
-		</where>
+		where b.author_id = #{userId} and b.is_deleted = 0 and b.status = 1
 	</select>
 </mapper>

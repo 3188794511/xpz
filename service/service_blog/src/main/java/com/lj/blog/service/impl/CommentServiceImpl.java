@@ -8,8 +8,11 @@ import com.lj.blog.mapper.CommentMapper;
 import com.lj.blog.service.BlogService;
 import com.lj.blog.service.CommentService;
 import com.lj.client.UserClientService;
+import com.lj.constant.UserBehaviorConstant;
+import com.lj.model.blog.Blog;
 import com.lj.model.blog.Comment;
 import com.lj.model.user.User;
+import com.lj.model.user.UserLog;
 import com.lj.util.UserInfoContext;
 import com.lj.dto.CommentQueryDto;
 import com.lj.vo.CommentUser;
@@ -39,6 +42,7 @@ import static com.lj.constant.RedisConstant.LIKE_COMMENT;
  */
 @Service
 public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment> implements CommentService {
+
     @Autowired
     private UserClientService userClientService;
     @Autowired
@@ -73,6 +77,12 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment> impl
         comment.setBlogId(blogId);
         comment.setContent(content);
         boolean isSuccess = baseMapper.insert(comment) > 0;
+        //记录用户行为日志
+        UserLog userLog = new UserLog();
+        userLog.setUserId(commentUserId);
+        userLog.setBlogId(blogId);
+        userLog.setBehavior(UserBehaviorConstant.COMMENT_BLOG);
+        userClientService.addUserLog(userLog);
         return isSuccess ? Result.ok(comment.getId()).message("发表评论成功") : Result.fail().message("发表评论失败");
     }
 
@@ -272,18 +282,18 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment> impl
         Page<CommentVo> commentVoPage = new Page<>();
         //当前页
         commentVoPage.setCurrent(page);
-        //计算索引偏移量
-        page = (page - 1) * size;
-        List<CommentVo> commentVoList = baseMapper.selectCommentPage(page,size, commentQueryDto);
-        //记录
-        commentVoPage.setRecords(commentVoList);
         //分页大小
         commentVoPage.setSize(size);
+        //计算索引偏移量
+        List<CommentVo> commentVoList = baseMapper.selectCommentPage((page - 1) * size,size, commentQueryDto);
+        //记录
+        commentVoPage.setRecords(commentVoList);
         //总条数
         long total = baseMapper.selectCountParam(commentQueryDto);
         commentVoPage.setTotal(total);
         return commentVoPage;
     }
+
 
     /**
      * 根据父评论id查询子评论
@@ -313,14 +323,23 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment> impl
     }
 
     /**
-     * 用户的评论数量
+     * 查询用户通过审核博客的评论数量
      * @param userId
      * @return
      */
-    public Long selectUserCommentCount(Long userId) {
-        LambdaQueryWrapper<Comment> wrapper = new LambdaQueryWrapper<>();
-        wrapper.eq(Comment::getUserId,userId);
-        Integer count = baseMapper.selectCount(wrapper);
+    public Long getUserBlogsCommentNums(Long userId) {
+        LambdaQueryWrapper<Blog> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(Blog::getAuthorId, userId)
+                .eq(Blog::getStatus, 1)
+                .select(Blog::getId);
+        List<Blog> blogList = blogService.list(wrapper);
+        if (blogList.isEmpty()) {
+            return 0L;
+        }
+        List<Long> blogIds = blogList.stream().map(i -> i.getId()).collect(Collectors.toList());
+        LambdaQueryWrapper<Comment> wrapper1 = new LambdaQueryWrapper<>();
+        wrapper1.in(Comment::getBlogId, blogIds);
+        Integer count = baseMapper.selectCount(wrapper1);
         return Long.valueOf(count);
     }
 }

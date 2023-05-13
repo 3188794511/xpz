@@ -6,7 +6,7 @@ import com.lj.base.Result;
 import com.lj.model.user.User;
 import com.lj.dto.LoginUserDto;
 import com.lj.dto.UserInfoDto;
-import com.lj.vo.UserDataVo;
+import com.lj.vo.UserCoreDataVo;
 import com.lj.vo.UserInfoVo;
 import com.lj.dto.UserQueryDto;
 import com.lj.vo.UserBaseInfo;
@@ -14,6 +14,7 @@ import com.lj.dto.UserUpdateDto;
 import com.lj.vo.UserSecretInfo;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 public interface UserService extends IService<User> {
@@ -60,5 +61,6 @@ public interface UserService extends IService<User> {
 
     Result updateUserPwd(UserSecretInfo UserSecretInfo, Long userId);
 
-    List<UserDataVo> getUserData(Long userId);
+    List<UserCoreDataVo> fetchUserCoreData(Long userId);
+
 }

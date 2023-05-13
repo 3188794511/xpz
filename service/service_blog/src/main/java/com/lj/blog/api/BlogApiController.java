@@ -18,8 +18,8 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.Path;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 @RestController
 @RequestMapping("/xpz/api/blog/blog")
@@ -120,9 +120,9 @@ public class BlogApiController {
      * @return
      */
     @GetMapping("/follow-user-blog/{page}/{size}")
-    public Result pageQueryFollowUserBlog(@PathVariable Long page,@PathVariable Long size,HttpServletRequest request){
+    public Result pageQueryFollowUserBlog(@PathVariable Long page,@PathVariable Long size,@RequestParam(required = false,value = "blogAuthorId") Long blogAuthorId,HttpServletRequest request){
         Long userId = JwtTokenUtil.getUserId(request.getHeader("token"));
-        Page<BlogVo> res = blogService.pageQueryFollowUserBlog(page,size,userId);
+        Page<BlogVo> res = blogService.pageQueryFollowUserBlog(page,size,userId,blogAuthorId);
         return Result.ok(res);
     }
 
@@ -140,12 +140,12 @@ public class BlogApiController {
     }
 
     /**
-     * 查询最热门的的5篇帖子(已发布)
+     * 查询最热门的的7篇帖子(已发布)
      * @return
      */
     @GetMapping("/hot")
     public Result hotBlogs(){
-        List<HotBlogVo> blogs = blogService.hotFiveBlogs();
+        List<HotBlogVo> blogs = blogService.hotBlogs();
         return Result.ok(blogs);
     }
 
@@ -193,6 +193,8 @@ public class BlogApiController {
         return Result.ok(blogs);
     }
 
+
+
     /**
      * 根据用户id查询自己的帖子(已发布)
      * @param userId
@@ -219,7 +221,7 @@ public class BlogApiController {
      * @param id
      * @return
      */
-    @MyLog(value = "点赞帖子")
+    @MyLog(value = "点赞或取消点赞帖子")
     @PutMapping("/likes/{id}")
     public Result likes(@PathVariable Long id){
         Result res =  blogService.likes(id);
@@ -238,24 +240,24 @@ public class BlogApiController {
     }
 
     /**
-     * 用户帖子浏览总量
+     * 获取用户博客的例如浏览量、点赞量等数据
      * @param userId
      * @return
      */
-    @RequestMapping("/data/views/count")
-    public Result<Long> blogViews(Long userId){
-        Long data = blogService.viewsCount(userId);
-        return Result.ok(data);
+    @GetMapping("/user-blog-data")
+    public List<UserCoreDataVo> getUserBlogData(Long userId){
+        List<UserCoreDataVo> data = blogService.getUserBlogData(userId);
+        return data;
     }
 
     /**
-     * 用户帖子点赞总量
+     * 获取用户所有发布博客的id
      * @param userId
      * @return
      */
-    @RequestMapping("/data/likes/count")
-    public Result<Long> blogLikes(Long userId){
-        Long data = blogService.likesCount(userId);
-        return Result.ok(data);
+    @GetMapping("/user-blog-id/{userId}")
+    public List<Long> getUserBlogIds(@PathVariable Long userId){
+        List<Long> blogIds = blogService.listUserBlogIds(userId);
+        return blogIds;
     }
 }

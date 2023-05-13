@@ -27,6 +27,9 @@
 			<if test="commentQueryDto.blogTitle != null">
 			    b.title like CONCAT('%',#{commentQueryDto.blogTitle},'%')
 			</if>
+			<if test="commentQueryDto.userId != null">
+				and b.author_id = #{commentQueryDto.userId}
+			</if>
 			<if test="commentQueryDto.commentUsername != null">
 				and u.nick_name like CONCAT('%',#{commentQueryDto.commentUsername},'%')
 			</if>
@@ -48,6 +51,9 @@
 		<where>
 			<if test="commentQueryDto.blogTitle != null">
 				b.title like CONCAT('%',#{commentQueryDto.blogTitle},'%')
+			</if>
+			<if test="commentQueryDto.userId != null">
+				and b.author_id = #{commentQueryDto.userId}
 			</if>
 			<if test="commentQueryDto.commentUsername != null">
 				and u.nick_name like CONCAT('%',#{commentQueryDto.commentUsername},'%')

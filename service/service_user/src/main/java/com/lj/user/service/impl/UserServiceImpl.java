@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.lj.base.Result;
 import com.lj.client.BlogClientService;
 import com.lj.client.MessageClientService;
+import com.lj.constant.IconConstant;
 import com.lj.model.user.User;
 import com.lj.user.mapper.UserMapper;
 import com.lj.user.service.UserService;
@@ -18,7 +19,7 @@ import com.lj.dto.UserQueryDto;
 import com.lj.vo.UserBaseInfo;
 import com.lj.dto.UserUpdateDto;
 import com.lj.dto.UserInfoDto;
-import com.lj.vo.UserDataVo;
+import com.lj.vo.UserCoreDataVo;
 import com.lj.vo.UserInfoVo;
 import com.lj.vo.UserSecretInfo;
 import lombok.extern.slf4j.Slf4j;
@@ -415,17 +416,12 @@ public class UserServiceImpl extends ServiceImpl<UserMapper,User> implements Use
      */
     public boolean addChatUser(Long userId, Long id) {
         SetOperations<String, String> ops = redisTemplate.opsForSet();
-        String key1 = CHAT_WITH_ME_USER + userId;
-        String key2 = CHAT_WITH_ME_USER + id;
-        boolean r1 = true;
-        boolean r2 = true;
-        if(Boolean.FALSE.equals(ops.isMember(key1, id.toString()))){
-            r1 = ops.add(key1,id.toString()) > 0;
+        String key = CHAT_WITH_ME_USER + userId;
+        boolean isSuccess = true;
+        if(!ops.isMember(key,id.toString())){
+            isSuccess = ops.add(key,id.toString()) > 0;
         }
-        if(Boolean.FALSE.equals(ops.isMember(key2, userId.toString()))){
-            r2 = ops.add(key2,userId.toString()) > 0;
-        }
-        return r1 & r2;
+        return isSuccess;
     }
 
     /**
@@ -445,33 +441,18 @@ public class UserServiceImpl extends ServiceImpl<UserMapper,User> implements Use
     }
 
     /**
-     * 获取用户数据
+     * 查询用户中心数据
      * @param userId
      * @return
      */
-    public List<UserDataVo> getUserData(Long userId) {
-        List<UserDataVo> res = new ArrayList<>();
-        List<String> icons = Arrays.asList("el-icon-view","el-icon-s-custom","icon-thirdicon","el-icon-chat-dot-round","icon-thirddianzan");
-        List<String> titles = Arrays.asList("帖子访客","我的粉丝","点赞","评论","我的关注");
-        Result r1 = blogClientService.blogViews(userId);
-        Long blogViews = Long.valueOf( r1.getData().toString());
-        SetOperations<String, String> ops = redisTemplate.opsForSet();
-        String myFans = FOLLOW_ME_USER + userId;
-        Long myFansCount = ops.size(myFans);
-        Result r2 = blogClientService.blogLikes(userId);
-        Long blogLikes = Long.valueOf(r2.getData().toString()) ;
-        Result r3 = blogClientService.userCommentCount(userId);
-        Long commentCount = Long.valueOf(r3.getData().toString()) ;
-        String myFollows = MY_FOLLOW_USER + userId;
-        Long myFollowsCount = ops.size(myFollows);
-        List<Long> values = Arrays.asList(blogViews,myFansCount,blogLikes,commentCount,myFollowsCount);
-        for (int i = 0; i < icons.size(); i++) {
-            UserDataVo userDataVo = new UserDataVo();
-            userDataVo.setIcon(icons.get(i));
-            userDataVo.setTitle(titles.get(i));
-            userDataVo.setValue(values.get(i));
-            res.add(userDataVo);
-        }
-        return res;
+    public List<UserCoreDataVo> fetchUserCoreData(Long userId) {
+        List<UserCoreDataVo> userBlogData = blogClientService.getUserBlogData(userId);
+        //查询用户粉丝数
+        Long followMeUserCount = followMeUserCount(userId);
+        UserCoreDataVo userCoreDataVo = IconConstant.ICONS.get(3);
+        userCoreDataVo.setVal(followMeUserCount);
+        userBlogData.add(userCoreDataVo);
+        return userBlogData;
     }
+
 }

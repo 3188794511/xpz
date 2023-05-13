@@ -2,6 +2,7 @@ package com.lj.client;
 
 import com.lj.base.Result;
 import com.lj.model.user.User;
+import com.lj.model.user.UserLog;
 import com.lj.model.user.ViewHistory;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,4 +17,7 @@ public interface UserClientService {
 
     @PostMapping("/xpz/api/user/history/save")
     Result addViewHistory(@RequestBody ViewHistory viewHistory);
+
+    @PostMapping("/xpz/admin/user/user-log/save")
+    Result addUserLog(@RequestBody UserLog userLog);
 }

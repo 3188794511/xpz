@@ -43,7 +43,7 @@ public class BlogController {
     public Result approvedBlog(@PathVariable Long id, HttpServletRequest request) {
         String token = request.getHeader("token");
         Long adminId = JwtTokenUtil.getUserId(token);
-        boolean isSuccess = blogService.approvedBlog(id,adminId);
+        boolean isSuccess = blogService.approvedBlog(id);
         return isSuccess ? Result.ok() : Result.fail();
     }
 
@@ -57,7 +57,7 @@ public class BlogController {
     public Result noApprovedBlog(@PathVariable Long id,@RequestBody ReasonVo reasonVo,HttpServletRequest request){
         String token = request.getHeader("token");
         Long adminId = JwtTokenUtil.getUserId(token);
-        boolean isSuccess = blogService.noApprovedBlog(id,reasonVo.getReason(),adminId);
+        boolean isSuccess = blogService.noApprovedBlog(id,reasonVo.getReason());
         return isSuccess ? Result.ok() : Result.fail();
     }
 

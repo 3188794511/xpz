@@ -37,6 +37,7 @@ public class MyWebMvcConfig implements WebMvcConfigurer {
                         ,"/xpz/api/blog/comment/remove"
                         ,"/xpz/api/blog/comment/search/**"
                         ,"/xpz/api/blog/comment/likes/**"
+                        ,"/xpz/api/blog/comment/dynamic-comment/**"
                         //用户接口
                         ,"/xpz/api/user/update/**"
                         ,"/xpz/api/user/history/**"

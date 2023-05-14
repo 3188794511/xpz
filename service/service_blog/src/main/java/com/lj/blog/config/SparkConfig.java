@@ -8,7 +8,6 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class SparkConfig {
-
     @Value("${spark.app.name}")
     private String appName;
     @Value("${spark.master.uri}")
@@ -21,7 +20,6 @@ public class SparkConfig {
                 .setMaster(sparkMasterUri);
         return sparkConf;
     }
-
 
     @Bean
     public SparkSession sparkSession() {

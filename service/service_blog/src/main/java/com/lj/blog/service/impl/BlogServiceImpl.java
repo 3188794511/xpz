@@ -17,11 +17,8 @@ import com.lj.constant.IconConstant;
 import com.lj.constant.RedisConstant;
 import com.lj.constant.UserBehaviorConstant;
 import com.lj.dto.*;
-import com.lj.model.blog.Blog;
-import com.lj.model.blog.BlogDetail;
-import com.lj.model.blog.BlogTag;
+import com.lj.model.blog.*;
 import com.lj.blog.es.BlogDocument;
-import com.lj.model.blog.Tag;
 import com.lj.model.message.Message;
 import com.lj.model.message.SendMessage2AllDto;
 import com.lj.model.user.User;
@@ -764,6 +761,14 @@ public class BlogServiceImpl extends ServiceImpl<BlogMapper, Blog> implements Bl
             records = baseMapper.selectFollowUserBlog(page,size,followUsers,blogAuthorId);
             records.forEach(i -> {
                i.setTagNames(List.of( i.getTagNamesAsStr().split(",")));
+               LambdaQueryWrapper<Comment> wrapper = new LambdaQueryWrapper<>();
+               wrapper.eq(Comment::getBlogId,i.getId());
+               //帖子评论量
+               int commentsCount = commentService.count(wrapper);
+               i.setCommentsCount(commentsCount);
+               //是否点赞过该帖子
+                Boolean member = ops.isMember(LIKE_BLOG + i.getId(), userId.toString());
+                i.setIsLiked(Boolean.TRUE.equals(member) ? 1 : 0);
             });
             total = baseMapper.selectFollowUserBlogCount(myFollowUsers,blogAuthorId);
         }

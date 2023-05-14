@@ -76,6 +76,23 @@ public class CommentApiController {
     }
 
     /**
+     * 在动态中查看评论(最多显示五条)
+     * @param blogId
+     * @param orderBy
+     * @param request
+     * @return
+     */
+    @GetMapping("/dynamic-comment/{blogId}")
+    public Result getDynamicComment(@PathVariable Long blogId, @RequestParam(required = false) Integer orderBy, HttpServletRequest request){
+        //获取请求头token信息
+        String token = request.getHeader("token");
+        Long userId = JwtTokenUtil.getUserId(token);
+        List<CommentViewVo> allComments = commentService.listTreeByBlogId(blogId,orderBy,userId);
+        List<CommentViewVo> commentViewVoList = allComments.size() >= 5 ? allComments.subList(0,5) : allComments;
+        return Result.ok(commentViewVoList);
+    }
+
+    /**
      * 查询当前用户是否已经点赞过该评论
      * @param commentId
      * @return

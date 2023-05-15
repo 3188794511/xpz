@@ -37,7 +37,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import java.util.*;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 import static com.lj.constant.RedisConstant.LIKE_BLOG;
@@ -754,6 +753,8 @@ public class BlogServiceImpl extends ServiceImpl<BlogMapper, Blog> implements Bl
         page = (page - 1) * size;
         SetOperations<String, String> ops = stringRedisTemplate.opsForSet();
         Set<String> myFollowUsers = ops.members(RedisConstant.MY_FOLLOW_USER + userId);
+        //将用户自己添加到动态用户列表中
+        myFollowUsers.add(UserInfoContext.get().toString());
         List<BlogVo> records = new ArrayList<>();
         Long total = 0L;
         if(!myFollowUsers.isEmpty()){

@@ -63,4 +63,5 @@ public interface UserService extends IService<User> {
 
     List<UserCoreDataVo> fetchUserCoreData(Long userId);
 
+    Page<User> pageQueryDynamicUser(Long userId, Long page, Long size);
 }

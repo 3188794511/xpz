@@ -222,6 +222,21 @@ public class UserApiController {
     }
 
     /**
+     * 动态页面的所有用户(包含我关注的用户和自己)
+     * @param request
+     * @param page
+     * @param size
+     * @return
+     */
+    @GetMapping("/dynamic/{page}/{size}")
+    public Result dynamicUsers(HttpServletRequest request,@PathVariable Long page,@PathVariable Long size){
+        String token = request.getHeader("token");
+        Long userId = JwtTokenUtil.getUserId(token);
+        Page<User> users = userService.pageQueryDynamicUser(userId,page,size);
+        return Result.ok(users);
+    }
+
+    /**
      * 新增或修改访问历史
      * @param viewHistory
      * @return

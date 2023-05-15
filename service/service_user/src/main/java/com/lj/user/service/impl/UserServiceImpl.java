@@ -357,6 +357,27 @@ public class UserServiceImpl extends ServiceImpl<UserMapper,User> implements Use
     }
 
     /**
+     * 动态页面的所有用户(包含我关注的用户和自己)
+     * @param userId
+     * @param page
+     * @param size
+     * @return
+     */
+    public Page<User> pageQueryDynamicUser(Long userId, Long page, Long size) {
+        Page<User> userPage = this.pageQueryFollowMeUser(userId, page, size);
+        userPage.setTotal(userPage.getTotal() + 1);
+        if(page == 1){
+            List<User> records = userPage.getRecords();
+            LambdaQueryWrapper<User> wrapper = new LambdaQueryWrapper<>();
+            wrapper.select(User::getId,User::getNickName,User::getPic,User::getSelfDescribe)
+                    .eq(User::getId,UserInfoContext.get());
+            User myInfo = baseMapper.selectOne(wrapper);
+            records.add(0,myInfo);
+        }
+        return userPage;
+    }
+
+    /**
      * 判断是否关注该用户
      * @param userId
      * @return

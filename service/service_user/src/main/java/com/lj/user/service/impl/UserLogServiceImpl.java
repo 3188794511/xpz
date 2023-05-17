@@ -26,7 +26,7 @@ public class UserLogServiceImpl extends ServiceImpl<UserLogMapper, UserLog> impl
     private BlogClientService blogClientService;
 
     /**
-     * 查询用户近七天的博客访问量
+     * 查询用户近七天的博客访问量(用户刚注册时可能未发布过帖子)
      * @param userId
      * @return
      */
@@ -38,9 +38,14 @@ public class UserLogServiceImpl extends ServiceImpl<UserLogMapper, UserLog> impl
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         for (LocalDate date = startDate;date.isBefore(curDate);date = date.plusDays(1)){
             Map<String,String> oneDayData = new HashMap<>();
-            Long viewCount = baseMapper.selectUserSevenDaysData(date, blogIds);
+            if(!blogIds.isEmpty()){
+                Long viewCount = baseMapper.selectUserSevenDaysData(date, blogIds);
+                oneDayData.put("viewCount", viewCount.toString());
+            }
+            else {
+                oneDayData.put("viewCount", "0");
+            }
             oneDayData.put("date", date.format(formatter));
-            oneDayData.put("viewCount", viewCount.toString());
             data.add(oneDayData);
         }
         return data;

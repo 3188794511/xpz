@@ -327,6 +327,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper,User> implements Use
             }
             userPage.setTotal(userIds.size());
         }
+        else{
+            userPage.setRecords(new ArrayList<>());
+        }
         return userPage;
     }
 
@@ -342,6 +345,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper,User> implements Use
         String key = FOLLOW_ME_USER + userId;//谁关注了我
         Page<User> userPage = new Page<>(page,size);
         if(operations.members(key).size() > 0){
+            //关注列表为空
             Set<Long> userIds = operations.members(key).stream()
                     .map(i -> Long.parseLong(i))
                     .collect(Collectors.toSet());
@@ -352,6 +356,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper,User> implements Use
                 baseMapper.selectPage(userPage,wrapper);
             }
             userPage.setTotal(userIds.size());
+        }
+        else{
+            userPage.setRecords(new ArrayList<>());
         }
         return userPage;
     }
@@ -364,7 +371,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper,User> implements Use
      * @return
      */
     public Page<User> pageQueryDynamicUser(Long userId, Long page, Long size) {
-        Page<User> userPage = this.pageQueryFollowMeUser(userId, page, size);
+        Page<User> userPage = pageQueryMyFollowUser(userId, page, size);
         userPage.setTotal(userPage.getTotal() + 1);
         if(page == 1){
             List<User> records = userPage.getRecords();

@@ -8,6 +8,7 @@
 		<result column="author_name" property="authorName"></result>
 		<result column="pic" property="pic"></result>
 		<result column="article_summary" property="articleSummary"></result>
+		<result column="content_md" property="contentMd"></result>
 		<result column="views" property="views"></result>
 		<result column="likes" property="likes"></result>
 		<result column="create_time" property="createTime"></result>
@@ -284,14 +285,12 @@
 	
 	<select id="selectFollowUserBlog" resultMap="blogVo">
 		select
-		b.*,t.type_name,GROUP_CONCAT(distinct tg.tag_name) as tag_names,u.nick_name as author_name,u.pic as pic
+		b.*,bd.content_md,u.nick_name as author_name,u.pic as pic
 		from blog b
-		left join type t on b.type_id = t.id
-		left join blog_tag bt on b.id = bt.blog_id
-		left join tag tg on bt.tag_id = tg.id
+		left join blog_detail bd on bd.blog_id = b.id
 		left join xpz_user.tb_user u on u.id = b.author_id
 		<where>
-			b.status = 1 and b.is_deleted = 0 and bt.is_deleted = 0
+			b.status = 1 and b.is_deleted = 0
 			<choose>
 				<when test="blogAuthorId != null">
 					and b.author_id = #{blogAuthorId}
@@ -304,7 +303,6 @@
 				</otherwise>
 			</choose>
 		</where>
-		group by b.id
 		order by b.publish_date desc,b.update_time desc
 		limit #{page},#{size}
 	</select>
@@ -313,12 +311,8 @@
 		select
 		count(distinct b.id) as total
 		from blog b
-		left join type t on b.type_id = t.id
-		left join blog_tag bt on b.id = bt.blog_id
-		left join tag tg on bt.tag_id = tg.id
-		left join xpz_user.tb_user u on u.id = b.author_id
 		<where>
-			b.status = 1 and b.is_deleted = 0 and bt.is_deleted = 0
+			b.status = 1 and b.is_deleted = 0
 			<choose>
 				<when test="blogAuthorId != null">
 					and b.author_id = #{blogAuthorId}

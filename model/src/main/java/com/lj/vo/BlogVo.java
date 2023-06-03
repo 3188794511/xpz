@@ -25,4 +25,5 @@ public class BlogVo extends Blog {
     private List<CommentViewVo> comments = new ArrayList<>();
     //当前用户是否点赞
     private Integer isLiked;
+    private String contentMd;
 }

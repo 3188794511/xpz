@@ -761,7 +761,6 @@ public class BlogServiceImpl extends ServiceImpl<BlogMapper, Blog> implements Bl
             Set<Long> followUsers = myFollowUsers.stream().map(i -> Long.valueOf(i)).collect(Collectors.toSet());
             records = baseMapper.selectFollowUserBlog(page,size,followUsers,blogAuthorId);
             records.forEach(i -> {
-               i.setTagNames(List.of( i.getTagNamesAsStr().split(",")));
                LambdaQueryWrapper<Comment> wrapper = new LambdaQueryWrapper<>();
                wrapper.eq(Comment::getBlogId,i.getId());
                //帖子评论量
